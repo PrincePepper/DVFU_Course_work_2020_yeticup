@@ -1,1 +1,2 @@
-# YetiCup_CourseWork_2020
+# Course work on the topic "Yeti Cup" 2020
+
