@@ -14,48 +14,38 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTextBrowser" name="textBrowser">
+   <widget class="QPushButton" name="show_teams_button">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>50</y>
-      <width>256</width>
-      <height>461</height>
+      <x>580</x>
+      <y>110</y>
+      <width>90</width>
+      <height>28</height>
      </rect>
     </property>
+    <property name="text">
+     <string>Команды</string>
+    </property>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget">
+   <widget class="QPushButton" name="show_players_button">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>580</x>
       <y>60</y>
-      <width>160</width>
-      <height>121</height>
+      <width>90</width>
+      <height>28</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>Список участников</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_2">
-       <property name="text">
-        <string>Список команд</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <property name="text">
+     <string>Участники</string>
+    </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>60</x>
       <y>530</y>
-      <width>251</width>
+      <width>261</width>
       <height>28</height>
      </rect>
     </property>
@@ -63,17 +53,14 @@
      <string>Транслировать</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QTableView" name="tableView">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>20</y>
-      <width>201</width>
-      <height>20</height>
+      <x>60</x>
+      <y>30</y>
+      <width>256</width>
+      <height>481</height>
      </rect>
-    </property>
-    <property name="text">
-     <string>Список подключенных панелей</string>
     </property>
    </widget>
   </widget>
