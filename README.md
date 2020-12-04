@@ -1,2 +1,1 @@
-# Course work on the topic "Yeti Cup" 2020
-
+`python3 main.py`
