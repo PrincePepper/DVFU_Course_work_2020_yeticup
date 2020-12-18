@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QTableWidgetItem, QDialog, QDialogButtonBox
 SELECT_ALL_PLAYERS = "SELECT name, score FROM players"
 SELECT_ALL_TEAMS = "SELECT name, score FROM teams"
 
-DELETE_PLAYER = "DELETE FROM players WHERE id = ?"
+DELETE_PLAYER = "DELETE FROM players WHERE name = "
 
 class LoginWindow(Qt.QMainWindow):
     def __init__(self):
@@ -50,13 +50,6 @@ class PlayersListWindow(Qt.QMainWindow):
         self.duplicate_button.clicked.connect(lambda: duplicatePlayerDialog.show())
         self.data.commit()
 
-    def getGenreName(self, genreNumber):
-        for currentGenre in self.genresList:
-            if currentGenre[0] == genreNumber:
-                return currentGenre[1]
-        return False
-
-
 
 class TeamsListWindow(Qt.QMainWindow):
     def __init__(self):
@@ -91,12 +84,11 @@ class DeletePlayerDialog(QDialog):
         self.buttonBox.rejected.connect(self.reject)
 
     def accept(self):
-        # indexes = playersListWindow.table.selectionModel().selectedIndexes()
-        # for i in range(len(indexes)):
-        #     playersListWindow.command.execute('DELETE from Films WHERE id = ?', (playersListWindow.result[indexes[i].row()][0],))
-        #     playersListWindow.table.removeRow(indexes[i].row())
-        #     playersListWindow.data.commit()
-        # playersListWindow.data.commit()
+        rows = playersListWindow.table.selectionModel().selectedIndexes()
+        for i in range(len(rows)):
+            playersListWindow.command.execute(DELETE_PLAYER + '"' + str(playersListWindow.result[rows[i].row()][0]) + '"')
+            playersListWindow.table.removeRow(rows[i].row())
+        playersListWindow.data.commit()
         self.close()
 
 
