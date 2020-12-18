@@ -66,7 +66,6 @@ class TeamsListWindow(Qt.QMainWindow):
             self.table.setRowCount(self.table.rowCount() + 1)
             for j, elem in enumerate(row):
                 self.table.setItem(i, j, QTableWidgetItem(str(elem)))
-        self.table.resizeColumnsToContents()
 
 
 class AddPlayerDialog(QDialog):
