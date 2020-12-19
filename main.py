@@ -1,8 +1,9 @@
 import sqlite3
 import sys
 
-from PyQt5 import Qt
+from PyQt5.Qt import QMainWindow, QDialog, QApplication
 from PyQt5 import uic
+from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import QTableWidgetItem, QDialog, QDialogButtonBox
 
 SELECT_ALL_PLAYERS = "SELECT name, score FROM players"
@@ -10,7 +11,7 @@ SELECT_ALL_TEAMS = "SELECT name, score FROM teams"
 
 DELETE_PLAYER = "DELETE FROM players WHERE name = "
 
-class LoginWindow(Qt.QMainWindow):
+class LoginWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('login.ui', self)
@@ -21,7 +22,7 @@ class LoginWindow(Qt.QMainWindow):
         self.close()
 
 
-class Main(Qt.QMainWindow):
+class Main(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('main_window.ui', self)
@@ -29,7 +30,7 @@ class Main(Qt.QMainWindow):
         self.show_teams_button.clicked.connect(lambda: teamsListWindow.show())
 
 
-class PlayersListWindow(Qt.QMainWindow):
+class PlayersListWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('players.ui', self)
@@ -51,7 +52,7 @@ class PlayersListWindow(Qt.QMainWindow):
         self.data.commit()
 
 
-class TeamsListWindow(Qt.QMainWindow):
+class TeamsListWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('teams.ui', self)
@@ -65,7 +66,18 @@ class TeamsListWindow(Qt.QMainWindow):
         for i, row in enumerate(self.result):
             self.table.setRowCount(self.table.rowCount() + 1)
             for j, elem in enumerate(row):
-                self.table.setItem(i, j, QTableWidgetItem(str(elem)))
+                self.table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
+        self.table.cellDoubleClicked.connect(self.onDoubleClick)
+
+    def createTableItem(self, content, flags):
+        element = QTableWidgetItem(content)
+        element.setFlags(flags)
+        return element
+
+    def onDoubleClick(self, row, col):
+        item = self.table.item(row, col)
+        item.setFlags(Qt.ItemIsEditable)
+        item.setFlags(Qt.ItemIsEnabled)
 
 
 class AddPlayerDialog(QDialog):
@@ -97,7 +109,7 @@ class DuplicatePlayerDialog(QDialog):
         uic.loadUi('duplication.ui', self)
 
 
-app = Qt.QApplication(sys.argv)
+app = QApplication(sys.argv)
 loginWindow = LoginWindow()
 loginWindow.show()
 
