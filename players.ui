@@ -53,20 +53,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="update_button">
-       <property name="font">
-        <font>
-         <family>Sans</family>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Изменить</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="delete_button">
        <property name="font">
         <font>
@@ -77,6 +63,19 @@
        </property>
        <property name="text">
         <string>Удалить</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="save_button">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Сохранить</string>
        </property>
       </widget>
      </item>

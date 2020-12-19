@@ -5,6 +5,7 @@ from PyQt5.Qt import QMainWindow, QDialog, QApplication
 from PyQt5 import uic
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import QTableWidgetItem, QDialog, QDialogButtonBox
+from PyQt5.QtGui import QKeyEvent
 
 SELECT_ALL_PLAYERS = "SELECT name, score FROM players"
 SELECT_ALL_TEAMS = "SELECT name, score FROM teams"
@@ -44,12 +45,43 @@ class PlayersListWindow(QMainWindow):
         for i, row in enumerate(self.result):
             self.table.setRowCount(self.table.rowCount() + 1)
             for j, elem in enumerate(row):
-                self.table.setItem(i, j, QTableWidgetItem(str(elem)))
-        self.table.resizeColumnsToContents()
+                self.table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
+
         self.add_button.clicked.connect(lambda: addPlayerDialog.show())
         self.delete_button.clicked.connect(lambda: deletePlayerDialog.show())
         self.duplicate_button.clicked.connect(lambda: duplicatePlayerDialog.show())
-        self.data.commit()
+
+        self.save_button.clicked.connect(lambda: self.save())
+
+        self.table.cellDoubleClicked.connect(self.onDoubleClick)
+        self.table.keyPressEvent = self.onKeyPress
+
+    def createTableItem(self, content, flags):
+        item = QTableWidgetItem(content)
+        item.setFlags(flags)
+        return item
+
+    def onDoubleClick(self, row, col):
+        if col == 0:
+            item = self.table.item(row, col)
+            item.setFlags(Qt.ItemIsEditable)
+            item.setFlags(Qt.ItemIsEnabled)
+
+    def onKeyPress(self, key: QKeyEvent):
+        if key.key() == Qt.Key_Return:
+            self.save()
+
+    def save(self):
+        newTable = []
+        oldTable = self.result
+        for i in range(len(oldTable)):
+            name = self.table.item(i, 0).text()
+            score = self.table.item(i, 1).text()
+            newTable.append((name, score))
+        for i, row in enumerate(newTable):
+            if row[1] != oldTable[i][1]:
+                self.command.execute('UPDATE players SET score = ' + row[1] + ' WHERE name = "' + row[0] + '"')
+                self.data.commit()
 
 
 class TeamsListWindow(QMainWindow):
@@ -70,9 +102,9 @@ class TeamsListWindow(QMainWindow):
         self.table.cellDoubleClicked.connect(self.onDoubleClick)
 
     def createTableItem(self, content, flags):
-        element = QTableWidgetItem(content)
-        element.setFlags(flags)
-        return element
+        item = QTableWidgetItem(content)
+        item.setFlags(flags)
+        return item
 
     def onDoubleClick(self, row, col):
         item = self.table.item(row, col)
