@@ -1,5 +1,6 @@
 import sqlite3
 import sys
+import docx
 
 from PyQt5.Qt import QMainWindow, QDialog, QApplication
 from PyQt5 import uic

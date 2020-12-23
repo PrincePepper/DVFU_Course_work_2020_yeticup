@@ -14,55 +14,47 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="show_teams_button">
-    <property name="geometry">
-     <rect>
-      <x>580</x>
-      <y>110</y>
-      <width>90</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Команды</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="show_players_button">
-    <property name="geometry">
-     <rect>
-      <x>580</x>
-      <y>60</y>
-      <width>90</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Участники</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>530</y>
-      <width>261</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Транслировать</string>
-    </property>
-   </widget>
-   <widget class="QTableView" name="tableView">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>30</y>
-      <width>256</width>
-      <height>481</height>
-     </rect>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="show_players_button">
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Участники</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QPushButton" name="show_teams_button">
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Команды</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QPushButton" name="pushButton">
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Транслировать</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
