@@ -15,8 +15,8 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QPushButton" name="show_players_button">
+    <item row="2" column="0">
+     <widget class="QPushButton" name="pushButton">
       <property name="maximumSize">
        <size>
         <width>200</width>
@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="text">
-       <string>Участники</string>
+       <string>Транслировать</string>
       </property>
      </widget>
     </item>
@@ -41,8 +41,8 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="QPushButton" name="pushButton">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="show_players_button">
       <property name="maximumSize">
        <size>
         <width>200</width>
@@ -50,7 +50,14 @@
        </size>
       </property>
       <property name="text">
-       <string>Транслировать</string>
+       <string>Участники</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="gen_report_button">
+      <property name="text">
+       <string>Сгенерировать отчёт</string>
       </property>
      </widget>
     </item>
