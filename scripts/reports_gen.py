@@ -1,10 +1,10 @@
 from docx import Document
 import sqlite3
 
-doc = Document("report_template.docx")
+doc = Document("../report_template.docx")
 doc.tables
 
-data = sqlite3.connect('players.db')
+data = sqlite3.connect('../database/players.db')
 command = data.cursor()
 players = command.execute("SELECT name, score FROM players;").fetchall()
 
@@ -14,7 +14,7 @@ for i in range(len(players)):
     doc.tables[1].cell(i + 1, 1).text = str(players[i][1])
     doc.tables[1].cell(i + 1, 2).text = players[i][0]
 
-data = sqlite3.connect('teams.db')
+data = sqlite3.connect('../database/teams.db')
 command = data.cursor()
 teams = command.execute("SELECT name, score FROM teams;").fetchall()
 for i in range(len(teams)):

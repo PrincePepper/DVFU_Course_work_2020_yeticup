@@ -18,7 +18,7 @@ DELETE_PLAYER = "DELETE FROM players WHERE name = "
 class LoginWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('login.ui', self)
+        uic.loadUi('ui_files/login.ui', self)
         self.pushButton.clicked.connect(lambda: self.show_main_window())
 
     def show_main_window(self):
@@ -29,7 +29,7 @@ class LoginWindow(QMainWindow):
 class Main(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('main_window.ui', self)
+        uic.loadUi('ui_files/main_window.ui', self)
         self.show_players_button.clicked.connect(lambda: playersListWindow.show())
         self.show_teams_button.clicked.connect(lambda: teamsListWindow.show())
         self.gen_report_button.clicked.connect(lambda: self.gen_report())
@@ -38,7 +38,7 @@ class Main(QMainWindow):
         doc = Document("report_template.docx")
         doc.tables
 
-        data = sqlite3.connect('teams.db')
+        data = sqlite3.connect('database/teams.db')
         command = data.cursor()
         teams = command.execute("SELECT name, score FROM teams;").fetchall()
         for i in range(len(teams)):
@@ -47,7 +47,7 @@ class Main(QMainWindow):
             doc.tables[0].cell(i + 1, 1).text = teams[i][0]
             doc.tables[0].cell(i + 1, 2).text = str(teams[i][1])
 
-        data = sqlite3.connect('players.db')
+        data = sqlite3.connect('database/players.db')
         command = data.cursor()
         players = command.execute("SELECT name, score FROM players;").fetchall()
         for i in range(len(players)):
@@ -62,8 +62,8 @@ class Main(QMainWindow):
 class PlayersListWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('players.ui', self)
-        self.data = sqlite3.connect('players.db')
+        uic.loadUi('ui_files/players.ui', self)
+        self.data = sqlite3.connect('database/players.db')
         self.command = self.data.cursor()
         self.result = list()
         self.table.setColumnCount(2)
@@ -115,8 +115,8 @@ class PlayersListWindow(QMainWindow):
 class TeamsListWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('teams.ui', self)
-        self.data = sqlite3.connect('teams.db')
+        uic.loadUi('ui_files/teams.ui', self)
+        self.data = sqlite3.connect('database/teams.db')
         self.command = self.data.cursor()
         self.result = list()
         self.table.setColumnCount(2)
@@ -143,13 +143,13 @@ class TeamsListWindow(QMainWindow):
 class AddPlayerDialog(QDialog):
     def __init__(self):
         super().__init__()
-        uic.loadUi('add_player.ui', self)
+        uic.loadUi('ui_files/add_player.ui', self)
 
 
 class DeletePlayerDialog(QDialog):
     def __init__(self):
         super().__init__()
-        uic.loadUi('delete_player.ui', self)
+        uic.loadUi('ui_files/delete_player.ui', self)
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
@@ -166,7 +166,7 @@ class DeletePlayerDialog(QDialog):
 class DuplicatePlayerDialog(QDialog):
     def __init__(self):
         super().__init__()
-        uic.loadUi('duplication.ui', self)
+        uic.loadUi('ui_files/duplication.ui', self)
 
 
 app = QApplication(sys.argv)
