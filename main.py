@@ -23,7 +23,7 @@ class LoginWindow(QMainWindow):
         self.pushButton.clicked.connect(lambda: self.show_main_window())
 
     def show_main_window(self):
-        mainWindow.show()
+        mainWindow.showFullScreen()
         self.close()
 
 
@@ -32,10 +32,11 @@ class Main(QMainWindow):
         super().__init__()
         uic.loadUi('ui_files/main_window.ui', self)
         self.stream_on = False
-        self.show_players_button.clicked.connect(lambda: playersListWindow.show())
-        self.show_teams_button.clicked.connect(lambda: teamsListWindow.show())
+        self.show_players_button.clicked.connect(lambda: playersListWindow.showFullScreen())
+        self.show_teams_button.clicked.connect(lambda: teamsListWindow.showFullScreen())
         self.show_results_button.clicked.connect(lambda: self.show_results())
         self.gen_report_button.clicked.connect(lambda: self.gen_report())
+        self.exit_button.clicked.connect(lambda: self.close())
 
     def show_results(self):
         if not self.stream_on:
@@ -76,7 +77,7 @@ class Main(QMainWindow):
         doc.save("report.docx")
 
 
-class PlayersListWindow(QMainWindow):
+class PlayersListWindow(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/players.ui', self)
@@ -85,6 +86,9 @@ class PlayersListWindow(QMainWindow):
         self.result = list()
         self.table.setColumnCount(2)
         self.table.setHorizontalHeaderLabels(['Участник', 'Очки'])
+        header = self.table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
         self.table.setRowCount(0)
         self.result = self.command.execute(SELECT_ALL_PLAYERS).fetchall()
         for i, row in enumerate(self.result):
@@ -97,6 +101,8 @@ class PlayersListWindow(QMainWindow):
         self.duplicate_button.clicked.connect(lambda: duplicatePlayerDialog.show())
 
         self.save_button.clicked.connect(lambda: self.save())
+
+        self.to_main_window_button.clicked.connect(lambda: self.close())
 
         self.table.cellDoubleClicked.connect(self.onDoubleClick)
         self.table.keyPressEvent = self.onKeyPress
@@ -129,7 +135,7 @@ class PlayersListWindow(QMainWindow):
                 self.data.commit()
 
 
-class TeamsListWindow(QMainWindow):
+class TeamsListWindow(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/teams.ui', self)
@@ -138,6 +144,9 @@ class TeamsListWindow(QMainWindow):
         self.result = list()
         self.table.setColumnCount(2)
         self.table.setHorizontalHeaderLabels(['Название', 'Очки'])
+        header = self.table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
         self.table.setRowCount(0)
         self.result = self.command.execute(SELECT_ALL_TEAMS).fetchall()
         for i, row in enumerate(self.result):
@@ -145,6 +154,8 @@ class TeamsListWindow(QMainWindow):
             for j, elem in enumerate(row):
                 self.table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
         self.table.cellDoubleClicked.connect(self.onDoubleClick)
+
+        self.to_main_window_button.clicked.connect(lambda: self.close())
 
     def createTableItem(self, content, flags):
         item = QTableWidgetItem(content)
@@ -214,7 +225,7 @@ class StreamWindow(QDialog):
         self.result = list()
         self.results_table.setColumnCount(2)
         self.results_table.setHorizontalHeaderLabels(['Участник', 'Очки'])
-        header = self.results_table.horizontalHeader()       
+        header = self.results_table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
         self.results_table.setRowCount(0)
@@ -234,7 +245,7 @@ class StreamWindow(QDialog):
         self.result = list()
         self.results_table.setColumnCount(2)
         self.results_table.setHorizontalHeaderLabels(['Команда', 'Очки'])
-        header = self.results_table.horizontalHeader()       
+        header = self.results_table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
         self.results_table.setRowCount(0)
@@ -242,7 +253,7 @@ class StreamWindow(QDialog):
         for i, row in enumerate(self.result):
             self.results_table.setRowCount(self.results_table.rowCount() + 1)
             for j, elem in enumerate(row):
-                self.results_table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))  
+                self.results_table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
         self.results_table.show()
         self.imageTimer = QTimer(self, timeout = self.show_image)
         self.imageTimer.start(4000)

@@ -15,19 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="0">
-     <widget class="QPushButton" name="show_results_button">
-      <property name="maximumSize">
-       <size>
-        <width>200</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Транслировать</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0">
      <widget class="QPushButton" name="show_teams_button">
       <property name="maximumSize">
@@ -38,6 +25,26 @@
       </property>
       <property name="text">
        <string>Команды</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="gen_report_button">
+      <property name="text">
+       <string>Сгенерировать отчёт</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QPushButton" name="show_results_button">
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Транслировать</string>
       </property>
      </widget>
     </item>
@@ -54,10 +61,10 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QPushButton" name="gen_report_button">
+    <item row="4" column="0">
+     <widget class="QPushButton" name="exit_button">
       <property name="text">
-       <string>Сгенерировать отчёт</string>
+       <string>Выход</string>
       </property>
      </widget>
     </item>
