@@ -1,12 +1,13 @@
 import sqlite3
 import sys
+
 import docx
 
 from PyQt5.Qt import QMainWindow, QDialog, QApplication
 from PyQt5 import uic, QtWidgets
-from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtCore import QSize, Qt, QTimer
 from PyQt5.QtWidgets import QTableWidgetItem, QDialog, QDialogButtonBox, QDesktopWidget
-from PyQt5.QtGui import QKeyEvent
+from PyQt5.QtGui import QKeyEvent, QPixmap
 
 from docx import Document
 
@@ -38,11 +39,17 @@ class Main(QMainWindow):
 
     def show_results(self):
         if not self.stream_on:
+            stream.show_content()
             monitor = QDesktopWidget().screenGeometry(1)
             stream.move(monitor.left(), monitor.top())
             stream.showFullScreen()
+            self.show_results_button.setText('Завершить трансляцию')
         else:
             stream.close()
+            self.show_results_button.setText('Транслировать')
+            stream.imageTimer = 0
+            stream.playersTimer = 0
+            stream.teamsTimer = 0
         self.stream_on = not self.stream_on
 
     def gen_report(self):
@@ -183,8 +190,27 @@ class StreamWindow(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/for_stream.ui', self)
-        self.data = sqlite3.connect('database/players.db')
-        self.command = self.data.cursor()
+        self.data1 = sqlite3.connect('database/players.db')
+        self.data2 = sqlite3.connect('database/teams.db')
+        self.label.setPixmap(QPixmap('logo.png'))
+        self.label.setAlignment(Qt.AlignCenter)
+        self.imageTimer = 0
+        self.playersTimer = 0
+        self.teamsTimer = 0
+
+    def show_content(self):
+        self.show_image()
+
+    def show_image(self):
+        self.results_table.hide()
+        self.label.show()
+        self.playersTimer = QTimer(self, timeout = self.show_players)
+        self.playersTimer.start(4000)
+
+    def show_players(self):
+        self.label.hide()
+        self.results_table.clear()
+        self.command = self.data1.cursor()
         self.result = list()
         self.results_table.setColumnCount(2)
         self.results_table.setHorizontalHeaderLabels(['Участник', 'Очки'])
@@ -197,6 +223,29 @@ class StreamWindow(QDialog):
             self.results_table.setRowCount(self.results_table.rowCount() + 1)
             for j, elem in enumerate(row):
                 self.results_table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
+        self.results_table.show()
+        self.teamsTimer = QTimer(self, timeout = self.show_teams)
+        self.teamsTimer.start(4000)
+
+    def show_teams(self):
+        self.label.hide()
+        self.results_table.clear()
+        self.command = self.data2.cursor()
+        self.result = list()
+        self.results_table.setColumnCount(2)
+        self.results_table.setHorizontalHeaderLabels(['Команда', 'Очки'])
+        header = self.results_table.horizontalHeader()       
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        self.results_table.setRowCount(0)
+        self.result = self.command.execute(SELECT_ALL_TEAMS).fetchall()
+        for i, row in enumerate(self.result):
+            self.results_table.setRowCount(self.results_table.rowCount() + 1)
+            for j, elem in enumerate(row):
+                self.results_table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))  
+        self.results_table.show()
+        self.imageTimer = QTimer(self, timeout = self.show_image)
+        self.imageTimer.start(4000)
 
     def createTableItem(self, content, flags):
         item = QTableWidgetItem(content)
