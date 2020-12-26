@@ -149,11 +149,6 @@ class TeamsListWindow(QDialog):
         self.table.cellDoubleClicked.connect(self.onDoubleClick)
         self.to_main_window_button.clicked.connect(lambda: self.close())
 
-    def createTableItem(self, content, flags):
-        item = QTableWidgetItem(content)
-        item.setFlags(flags)
-        return item
-
     def onDoubleClick(self, row, col):
         item = self.table.item(row, col)
         item.setFlags(Qt.ItemIsEditable)
@@ -225,12 +220,7 @@ class StreamWindow(QDialog):
         self.results_table.show()
         self.imageTimer = QTimer(self, timeout = self.show_image)
         self.imageTimer.start(4000)
-
-    def createTableItem(self, content, flags):
-        item = QTableWidgetItem(content)
-        item.setFlags(flags)
-        return item
-
+        
 
 app = QApplication(sys.argv)
 loginWindow = LoginWindow()
