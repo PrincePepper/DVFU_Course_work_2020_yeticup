@@ -3,9 +3,9 @@ import sys
 import docx
 
 from PyQt5.Qt import QMainWindow, QDialog, QApplication
-from PyQt5 import uic
+from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QTableWidgetItem, QDialog, QDialogButtonBox
+from PyQt5.QtWidgets import QTableWidgetItem, QDialog, QDialogButtonBox, QDesktopWidget
 from PyQt5.QtGui import QKeyEvent
 
 from docx import Document
@@ -30,13 +30,23 @@ class Main(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/main_window.ui', self)
+        self.stream_on = False
         self.show_players_button.clicked.connect(lambda: playersListWindow.show())
         self.show_teams_button.clicked.connect(lambda: teamsListWindow.show())
+        self.show_results_button.clicked.connect(lambda: self.show_results())
         self.gen_report_button.clicked.connect(lambda: self.gen_report())
+
+    def show_results(self):
+        if not self.stream_on:
+            monitor = QDesktopWidget().screenGeometry(1)
+            stream.move(monitor.left(), monitor.top())
+            stream.showFullScreen()
+        else:
+            stream.close()
+        self.stream_on = not self.stream_on
 
     def gen_report(self):
         doc = Document("report_template.docx")
-        doc.tables
 
         data = sqlite3.connect('database/teams.db')
         command = data.cursor()
@@ -169,9 +179,36 @@ class DuplicatePlayerDialog(QDialog):
         uic.loadUi('ui_files/duplication.ui', self)
 
 
+class StreamWindow(QDialog):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('ui_files/for_stream.ui', self)
+        self.data = sqlite3.connect('database/players.db')
+        self.command = self.data.cursor()
+        self.result = list()
+        self.results_table.setColumnCount(2)
+        self.results_table.setHorizontalHeaderLabels(['Участник', 'Очки'])
+        header = self.results_table.horizontalHeader()       
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        self.results_table.setRowCount(0)
+        self.result = self.command.execute(SELECT_ALL_PLAYERS).fetchall()
+        for i, row in enumerate(self.result):
+            self.results_table.setRowCount(self.results_table.rowCount() + 1)
+            for j, elem in enumerate(row):
+                self.results_table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
+
+    def createTableItem(self, content, flags):
+        item = QTableWidgetItem(content)
+        item.setFlags(flags)
+        return item
+
+
 app = QApplication(sys.argv)
 loginWindow = LoginWindow()
 loginWindow.show()
+
+stream = StreamWindow()
 
 mainWindow = Main()
 
