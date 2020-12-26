@@ -16,6 +16,27 @@ SELECT_ALL_TEAMS = "SELECT name, score FROM teams"
 
 DELETE_PLAYER = "DELETE FROM players WHERE name = "
 
+def create_table(table, data, horizontalHeaderLabels, request):
+    command = data.cursor()
+    result = list()
+    table.setColumnCount(len(horizontalHeaderLabels))
+    table.setHorizontalHeaderLabels(horizontalHeaderLabels)
+    header = table.horizontalHeader()
+    header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+    table.setRowCount(0)
+    result = command.execute(request).fetchall()
+    for i, row in enumerate(result):
+        table.setRowCount(table.rowCount() + 1)
+        for j, elem in enumerate(row):
+            table.setItem(i, j, createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
+
+def createTableItem(content, flags):
+    item = QTableWidgetItem(content)
+    item.setFlags(flags)
+    return item
+
+
 class LoginWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -58,7 +79,7 @@ class Main(QMainWindow):
 
         data = sqlite3.connect('database/teams.db')
         command = data.cursor()
-        teams = command.execute("SELECT name, score FROM teams;").fetchall()
+        teams = command.execute(SELECT_ALL_TEAMS).fetchall()
         for i in range(len(teams)):
             doc.tables[0].add_row()
             doc.tables[0].cell(i + 1, 0).text = str(i + 1)
@@ -67,7 +88,7 @@ class Main(QMainWindow):
 
         data = sqlite3.connect('database/players.db')
         command = data.cursor()
-        players = command.execute("SELECT name, score FROM players;").fetchall()
+        players = command.execute(SELECT_ALL_PLAYERS).fetchall()
         for i in range(len(players)):
             doc.tables[1].add_row()
             doc.tables[1].cell(i + 1, 0).text = str(i + 1)
@@ -82,19 +103,7 @@ class PlayersListWindow(QDialog):
         super().__init__()
         uic.loadUi('ui_files/players.ui', self)
         self.data = sqlite3.connect('database/players.db')
-        self.command = self.data.cursor()
-        self.result = list()
-        self.table.setColumnCount(2)
-        self.table.setHorizontalHeaderLabels(['Участник', 'Очки'])
-        header = self.table.horizontalHeader()
-        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        self.table.setRowCount(0)
-        self.result = self.command.execute(SELECT_ALL_PLAYERS).fetchall()
-        for i, row in enumerate(self.result):
-            self.table.setRowCount(self.table.rowCount() + 1)
-            for j, elem in enumerate(row):
-                self.table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
+        create_table(self.table, self.data, ['Участник', 'Очки'], SELECT_ALL_PLAYERS)
 
         self.add_button.clicked.connect(lambda: addPlayerDialog.show())
         self.delete_button.clicked.connect(lambda: deletePlayerDialog.show())
@@ -106,11 +115,6 @@ class PlayersListWindow(QDialog):
 
         self.table.cellDoubleClicked.connect(self.onDoubleClick)
         self.table.keyPressEvent = self.onKeyPress
-
-    def createTableItem(self, content, flags):
-        item = QTableWidgetItem(content)
-        item.setFlags(flags)
-        return item
 
     def onDoubleClick(self, row, col):
         if col == 0:
@@ -140,21 +144,9 @@ class TeamsListWindow(QDialog):
         super().__init__()
         uic.loadUi('ui_files/teams.ui', self)
         self.data = sqlite3.connect('database/teams.db')
-        self.command = self.data.cursor()
-        self.result = list()
-        self.table.setColumnCount(2)
-        self.table.setHorizontalHeaderLabels(['Название', 'Очки'])
-        header = self.table.horizontalHeader()
-        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        self.table.setRowCount(0)
-        self.result = self.command.execute(SELECT_ALL_TEAMS).fetchall()
-        for i, row in enumerate(self.result):
-            self.table.setRowCount(self.table.rowCount() + 1)
-            for j, elem in enumerate(row):
-                self.table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
-        self.table.cellDoubleClicked.connect(self.onDoubleClick)
+        create_table(self.table, self.data, ['Название', 'Очки'], SELECT_ALL_TEAMS)
 
+        self.table.cellDoubleClicked.connect(self.onDoubleClick)
         self.to_main_window_button.clicked.connect(lambda: self.close())
 
     def createTableItem(self, content, flags):
@@ -221,19 +213,7 @@ class StreamWindow(QDialog):
     def show_players(self):
         self.label.hide()
         self.results_table.clear()
-        self.command = self.data1.cursor()
-        self.result = list()
-        self.results_table.setColumnCount(2)
-        self.results_table.setHorizontalHeaderLabels(['Участник', 'Очки'])
-        header = self.results_table.horizontalHeader()
-        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        self.results_table.setRowCount(0)
-        self.result = self.command.execute(SELECT_ALL_PLAYERS).fetchall()
-        for i, row in enumerate(self.result):
-            self.results_table.setRowCount(self.results_table.rowCount() + 1)
-            for j, elem in enumerate(row):
-                self.results_table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
+        create_table(self.results_table, self.data1, ['Участник', 'Очки'], SELECT_ALL_PLAYERS)
         self.results_table.show()
         self.teamsTimer = QTimer(self, timeout = self.show_teams)
         self.teamsTimer.start(4000)
@@ -241,19 +221,7 @@ class StreamWindow(QDialog):
     def show_teams(self):
         self.label.hide()
         self.results_table.clear()
-        self.command = self.data2.cursor()
-        self.result = list()
-        self.results_table.setColumnCount(2)
-        self.results_table.setHorizontalHeaderLabels(['Команда', 'Очки'])
-        header = self.results_table.horizontalHeader()
-        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        self.results_table.setRowCount(0)
-        self.result = self.command.execute(SELECT_ALL_TEAMS).fetchall()
-        for i, row in enumerate(self.result):
-            self.results_table.setRowCount(self.results_table.rowCount() + 1)
-            for j, elem in enumerate(row):
-                self.results_table.setItem(i, j, self.createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
+        create_table(self.results_table, self.data2, ['Название', 'Очки'], SELECT_ALL_TEAMS)
         self.results_table.show()
         self.imageTimer = QTimer(self, timeout = self.show_image)
         self.imageTimer.start(4000)
