@@ -57,7 +57,7 @@ class Main(QMainWindow):
         self.show_teams_button.clicked.connect(lambda: teamsListWindow.showFullScreen())
         self.show_results_button.clicked.connect(lambda: self.show_results())
         self.gen_report_button.clicked.connect(lambda: self.gen_report())
-        self.exit_button.clicked.connect(lambda: self.close())
+        self.exit_button.clicked.connect(lambda: self.close_all_windows())
 
     def show_results(self):
         if not self.stream_on:
@@ -96,6 +96,15 @@ class Main(QMainWindow):
             doc.tables[1].cell(i + 1, 2).text = players[i][0]
 
         doc.save("report.docx")
+
+    def close_all_windows(self):
+        stream.close()
+        playersListWindow.close()
+        teamsListWindow.close()
+        addPlayerDialog.close()
+        deletePlayerDialog.close()
+        duplicatePlayerDialog.close()
+        mainWindow.close()
 
 
 class PlayersListWindow(QDialog):
@@ -192,9 +201,6 @@ class StreamWindow(QDialog):
         self.data2 = sqlite3.connect('database/teams.db')
         self.label.setPixmap(QPixmap('logo.png'))
         self.label.setAlignment(Qt.AlignCenter)
-        self.imageTimer = 0
-        self.playersTimer = 0
-        self.teamsTimer = 0
         self.contents = [self.show_image, self.show_players, self.show_teams]
         self.currentContent = 0
 
