@@ -195,32 +195,33 @@ class StreamWindow(QDialog):
         self.imageTimer = 0
         self.playersTimer = 0
         self.teamsTimer = 0
+        self.contents = [self.show_image, self.show_players, self.show_teams]
+        self.currentContent = 0
 
     def show_content(self):
         self.show_image()
+        self.contentTimer = QTimer(self, timeout = lambda: self.contents[self.currentContent]())
+        self.contentTimer.start(4000)
 
     def show_image(self):
+        self.currentContent = (self.currentContent + 1) % len(self.contents)
         self.results_table.hide()
         self.label.show()
-        self.playersTimer = QTimer(self, timeout = self.show_players)
-        self.playersTimer.start(4000)
 
     def show_players(self):
+        self.currentContent = (self.currentContent + 1) % len(self.contents)
         self.label.hide()
         self.results_table.clear()
         create_table(self.results_table, self.data1, ['Участник', 'Очки'], SELECT_ALL_PLAYERS)
         self.results_table.show()
-        self.teamsTimer = QTimer(self, timeout = self.show_teams)
-        self.teamsTimer.start(4000)
 
     def show_teams(self):
+        self.currentContent = (self.currentContent + 1) % len(self.contents)
         self.label.hide()
         self.results_table.clear()
         create_table(self.results_table, self.data2, ['Название', 'Очки'], SELECT_ALL_TEAMS)
         self.results_table.show()
-        self.imageTimer = QTimer(self, timeout = self.show_image)
-        self.imageTimer.start(4000)
-        
+
 
 app = QApplication(sys.argv)
 loginWindow = LoginWindow()
