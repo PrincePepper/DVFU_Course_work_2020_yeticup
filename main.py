@@ -11,17 +11,22 @@ from PyQt5.QtGui import QKeyEvent, QPixmap
 from docx import Document
 from docxtpl import DocxTemplate
 
-SELECT_ALL_PLAYERS = "SELECT name, score FROM players"
-SELECT_ALL_TEAMS = "SELECT name, score FROM teams"
+SELECT_ALL_PLAYERS_FROM_DB = "SELECT name, score FROM players"
+SELECT_ALL_TEAMS_FROM_DB = "SELECT name, score FROM teams"
+DELETE_PLAYER_FROM_DB = "DELETE FROM players WHERE name = "
 
-DELETE_PLAYER = "DELETE FROM players WHERE name = "
+DEFAULT_FLAGS = Qt.ItemIsEditable | Qt.ItemIsEnabled
 
 def default_item_constructor(content, flags, _ = None):
     item = QTableWidgetItem(content)
-    item.setFlags(flags)
+    if flags == DEFAULT_FLAGS:
+        item.setFlags(Qt.ItemIsEditable)
+        item.setFlags(Qt.ItemIsEnabled)
+    else:
+        item.setFlags(flags)
     return item
 
-def create_table(table, data, horizontalHeaderLabels, request, item_constructor = default_item_constructor, flags = Qt.ItemIsEditable | Qt.ItemIsEnabled):
+def create_table(table, data, horizontalHeaderLabels, request, item_constructor = default_item_constructor, flags = DEFAULT_FLAGS):
     command = data.cursor()
     table.setColumnCount(len(horizontalHeaderLabels))
     table.setHorizontalHeaderLabels(horizontalHeaderLabels)
@@ -87,7 +92,7 @@ class Main(QMainWindow):
         doc = Document("temp_report.docx")
         data = sqlite3.connect('database/teams.db')
         command = data.cursor()
-        teams = command.execute(SELECT_ALL_TEAMS).fetchall()
+        teams = command.execute(SELECT_ALL_TEAMS_FROM_DB).fetchall()
         for i in range(len(teams)):
             doc.tables[0].add_row()
             doc.tables[0].cell(i + 1, 0).text = str(i + 1)
@@ -96,7 +101,7 @@ class Main(QMainWindow):
 
         data = sqlite3.connect('database/players.db')
         command = data.cursor()
-        players = command.execute(SELECT_ALL_PLAYERS).fetchall()
+        players = command.execute(SELECT_ALL_PLAYERS_FROM_DB).fetchall()
         for i in range(len(players)):
             doc.tables[1].add_row()
             doc.tables[1].cell(i + 1, 0).text = str(i + 1)
@@ -123,7 +128,7 @@ class PlayersListWindow(QDialog):
         self.data = sqlite3.connect('database/players.db')
         self.command = self.data.cursor()
         self.flags = Qt.ItemIsSelectable | Qt.ItemIsEditable | Qt.ItemIsEnabled
-        self.result = create_table(self.table, self.data, ['Участник', 'Очки'], SELECT_ALL_PLAYERS, self.item_constructor, self.flags)
+        self.result = create_table(self.table, self.data, ['Участник', 'Очки'], SELECT_ALL_PLAYERS_FROM_DB, self.item_constructor, self.flags)
 
         self.add_button.clicked.connect(lambda: addPlayerDialog.show())
         self.delete_button.clicked.connect(lambda: deletePlayerDialog.show())
@@ -133,7 +138,6 @@ class PlayersListWindow(QDialog):
 
         self.to_main_window_button.clicked.connect(lambda: self.close())
 
-        self.table.cellDoubleClicked.connect(self.onDoubleClick)
         self.table.keyPressEvent = self.onKeyPress
 
     def item_constructor(self, content, flags, n):
@@ -144,12 +148,6 @@ class PlayersListWindow(QDialog):
             item.setFlags(Qt.ItemIsEditable)
             item.setFlags(Qt.ItemIsEnabled)
         return item
-
-    def onDoubleClick(self, row, col):
-        if col == 0:
-            item = self.table.item(row, col)
-            item.setFlags(Qt.ItemIsEditable)
-            item.setFlags(Qt.ItemIsEnabled)
 
     def onKeyPress(self, key: QKeyEvent):
         if key.key() == Qt.Key_Return:
@@ -174,15 +172,9 @@ class TeamsListWindow(QDialog):
         uic.loadUi('ui_files/teams.ui', self)
         self.data = sqlite3.connect('database/teams.db')
         self.command = self.data.cursor()
-        create_table(self.table, self.data, ['Название', 'Очки'], SELECT_ALL_TEAMS)
+        create_table(self.table, self.data, ['Название', 'Очки'], SELECT_ALL_TEAMS_FROM_DB)
 
-        self.table.cellDoubleClicked.connect(self.onDoubleClick)
         self.to_main_window_button.clicked.connect(lambda: self.close())
-
-    def onDoubleClick(self, row, col):
-        item = self.table.item(row, col)
-        item.setFlags(Qt.ItemIsEditable)
-        item.setFlags(Qt.ItemIsEnabled)
 
 
 class AddPlayerDialog(QDialog):
@@ -202,7 +194,7 @@ class DeletePlayerDialog(QDialog):
     def accept(self):
         rows = playersListWindow.table.selectionModel().selectedIndexes()
         for row in rows:
-            playersListWindow.command.execute(DELETE_PLAYER + '"' + str(playersListWindow.result[row.row()][0]) + '"')
+            playersListWindow.command.execute(DELETE_PLAYER_FROM_DB + '"' + str(playersListWindow.result[row.row()][0]) + '"')
             playersListWindow.table.removeRow(rows[0].row())
             playersListWindow.data.commit()
         self.close()
@@ -239,14 +231,14 @@ class StreamWindow(QDialog):
         self.currentContent = (self.currentContent + 1) % len(self.contents)
         self.label.hide()
         self.results_table.clear()
-        create_table(self.results_table, self.data1, ['Участник', 'Очки'], SELECT_ALL_PLAYERS)
+        create_table(self.results_table, self.data1, ['Участник', 'Очки'], SELECT_ALL_PLAYERS_FROM_DB)
         self.results_table.show()
 
     def show_teams(self):
         self.currentContent = (self.currentContent + 1) % len(self.contents)
         self.label.hide()
         self.results_table.clear()
-        create_table(self.results_table, self.data2, ['Название', 'Очки'], SELECT_ALL_TEAMS)
+        create_table(self.results_table, self.data2, ['Название', 'Очки'], SELECT_ALL_TEAMS_FROM_DB)
         self.results_table.show()
 
 
