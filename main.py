@@ -1,5 +1,6 @@
 import sqlite3
 import sys
+from pathlib import Path
 
 from PyQt5.Qt import QMainWindow, QDialog, QApplication
 from PyQt5 import uic, QtWidgets
@@ -8,6 +9,7 @@ from PyQt5.QtWidgets import QTableWidgetItem, QDialog, QDialogButtonBox, QDeskto
 from PyQt5.QtGui import QKeyEvent, QPixmap
 
 from docx import Document
+from docxtpl import DocxTemplate
 
 SELECT_ALL_PLAYERS = "SELECT name, score FROM players"
 SELECT_ALL_TEAMS = "SELECT name, score FROM teams"
@@ -70,8 +72,19 @@ class Main(QMainWindow):
         self.streamOn = not self.streamOn
 
     def gen_report(self):
-        doc = Document("report_template.docx")
+        competition_name = "Yeti Cup"
+        competition_date = "После дождичка в четверг"
+        competition_locate = "В большом доме"
+        competition_address = "Olga-city"
+        manager_name = "Иванов Иван Батькович"
 
+        doc = DocxTemplate("report_template.docx")
+        context = { 'competition_name' : competition_name, 'competition_date' : competition_date, 'competition_locate' : competition_locate,
+                    'competition_address' : competition_address, 'manager_name' : manager_name }
+        doc.render(context)
+        doc.save("temp_report.docx")
+
+        doc = Document("temp_report.docx")
         data = sqlite3.connect('database/teams.db')
         command = data.cursor()
         teams = command.execute(SELECT_ALL_TEAMS).fetchall()
@@ -91,6 +104,7 @@ class Main(QMainWindow):
             doc.tables[1].cell(i + 1, 2).text = players[i][0]
 
         doc.save("report.docx")
+        Path("temp_report.docx").unlink()
 
     def close_all_windows(self):
         stream.close()
