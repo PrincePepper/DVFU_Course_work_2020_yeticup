@@ -1,8 +1,6 @@
 import sqlite3
 import sys
 
-import docx
-
 from PyQt5.Qt import QMainWindow, QDialog, QApplication
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import QSize, Qt, QTimer
@@ -16,9 +14,13 @@ SELECT_ALL_TEAMS = "SELECT name, score FROM teams"
 
 DELETE_PLAYER = "DELETE FROM players WHERE name = "
 
-def create_table(table, data, horizontalHeaderLabels, request):
+def default_item_constructor(content, flags, _ = None):
+    item = QTableWidgetItem(content)
+    item.setFlags(flags)
+    return item
+
+def create_table(table, data, horizontalHeaderLabels, request, item_constructor = default_item_constructor, flags = Qt.ItemIsEditable | Qt.ItemIsEnabled):
     command = data.cursor()
-    result = list()
     table.setColumnCount(len(horizontalHeaderLabels))
     table.setHorizontalHeaderLabels(horizontalHeaderLabels)
     header = table.horizontalHeader()
@@ -29,12 +31,8 @@ def create_table(table, data, horizontalHeaderLabels, request):
     for i, row in enumerate(result):
         table.setRowCount(table.rowCount() + 1)
         for j, elem in enumerate(row):
-            table.setItem(i, j, createTableItem(str(elem), Qt.ItemIsEnabled | Qt.ItemIsEditable))
-
-def createTableItem(content, flags):
-    item = QTableWidgetItem(content)
-    item.setFlags(flags)
-    return item
+            table.setItem(i, j, item_constructor(str(elem), flags, j))
+    return result
 
 
 class LoginWindow(QMainWindow):
@@ -52,7 +50,7 @@ class Main(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/main_window.ui', self)
-        self.stream_on = False
+        self.streamOn = False
         self.show_players_button.clicked.connect(lambda: playersListWindow.showFullScreen())
         self.show_teams_button.clicked.connect(lambda: teamsListWindow.showFullScreen())
         self.show_results_button.clicked.connect(lambda: self.show_results())
@@ -60,7 +58,7 @@ class Main(QMainWindow):
         self.exit_button.clicked.connect(lambda: self.close_all_windows())
 
     def show_results(self):
-        if not self.stream_on:
+        if not self.streamOn:
             stream.show_content()
             monitor = QDesktopWidget().screenGeometry(1)
             stream.move(monitor.left(), monitor.top())
@@ -69,10 +67,7 @@ class Main(QMainWindow):
         else:
             stream.close()
             self.show_results_button.setText('Транслировать')
-            stream.imageTimer = 0
-            stream.playersTimer = 0
-            stream.teamsTimer = 0
-        self.stream_on = not self.stream_on
+        self.streamOn = not self.streamOn
 
     def gen_report(self):
         doc = Document("report_template.docx")
@@ -112,7 +107,9 @@ class PlayersListWindow(QDialog):
         super().__init__()
         uic.loadUi('ui_files/players.ui', self)
         self.data = sqlite3.connect('database/players.db')
-        create_table(self.table, self.data, ['Участник', 'Очки'], SELECT_ALL_PLAYERS)
+        self.command = self.data.cursor()
+        self.flags = Qt.ItemIsSelectable | Qt.ItemIsEditable | Qt.ItemIsEnabled
+        self.result = create_table(self.table, self.data, ['Участник', 'Очки'], SELECT_ALL_PLAYERS, self.item_constructor, self.flags)
 
         self.add_button.clicked.connect(lambda: addPlayerDialog.show())
         self.delete_button.clicked.connect(lambda: deletePlayerDialog.show())
@@ -124,6 +121,15 @@ class PlayersListWindow(QDialog):
 
         self.table.cellDoubleClicked.connect(self.onDoubleClick)
         self.table.keyPressEvent = self.onKeyPress
+
+    def item_constructor(self, content, flags, n):
+        item = QTableWidgetItem(content)
+        if n != 0:
+            item.setFlags(flags)
+        else:
+            item.setFlags(Qt.ItemIsEditable)
+            item.setFlags(Qt.ItemIsEnabled)
+        return item
 
     def onDoubleClick(self, row, col):
         if col == 0:
@@ -153,6 +159,7 @@ class TeamsListWindow(QDialog):
         super().__init__()
         uic.loadUi('ui_files/teams.ui', self)
         self.data = sqlite3.connect('database/teams.db')
+        self.command = self.data.cursor()
         create_table(self.table, self.data, ['Название', 'Очки'], SELECT_ALL_TEAMS)
 
         self.table.cellDoubleClicked.connect(self.onDoubleClick)
@@ -180,10 +187,10 @@ class DeletePlayerDialog(QDialog):
 
     def accept(self):
         rows = playersListWindow.table.selectionModel().selectedIndexes()
-        for i in range(len(rows)):
-            playersListWindow.command.execute(DELETE_PLAYER + '"' + str(playersListWindow.result[rows[i].row()][0]) + '"')
-            playersListWindow.table.removeRow(rows[i].row())
-        playersListWindow.data.commit()
+        for row in rows:
+            playersListWindow.command.execute(DELETE_PLAYER + '"' + str(playersListWindow.result[row.row()][0]) + '"')
+            playersListWindow.table.removeRow(rows[0].row())
+            playersListWindow.data.commit()
         self.close()
 
 
