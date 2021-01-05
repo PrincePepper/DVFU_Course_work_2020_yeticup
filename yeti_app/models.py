@@ -8,7 +8,7 @@ class User(models.Model):
     mail = models.CharField(max_length=255, unique=True)
     address = models.CharField(max_length=127)
     phone = models.CharField(max_length=15, unique=True)
-    photo = models.ImageField(upload_to='static/images/user_photos')
+    photo = models.ImageField(upload_to='user_photos')
     date = models.DateTimeField(auto_now_add=True)
 
 
@@ -20,12 +20,12 @@ class Competition(models.Model):
 
 
 class Image(models.Model):
-    photo = models.ImageField(upload_to='static/images/team_images')
+    photo = models.ImageField(upload_to='team_images')
     comment = models.CharField(max_length=255)
 
 
 class Blueprint(models.Model):
-    blueprint = models.ImageField(upload_to='static/images/team_blueprints')
+    blueprint = models.ImageField(upload_to='team_blueprints')
     info = models.CharField(max_length=255)
 
 
