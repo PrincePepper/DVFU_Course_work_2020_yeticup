@@ -55,9 +55,7 @@ class TeamSerializer(serializers.ModelSerializer):
             'team_name',
             'video_path',
             'info',
-            'place',
-            'image_id',
-            'blueprint_id'
+            'place'
         )
 
 
@@ -68,7 +66,8 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'photo',
-            'comment'
+            'comment',
+            'team_id'
         )
 
 
@@ -79,5 +78,6 @@ class BlueprintSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'blueprint',
-            'info'
+            'info',
+            'team_id'
         )
