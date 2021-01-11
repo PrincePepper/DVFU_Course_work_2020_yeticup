@@ -23,7 +23,7 @@
      </widget>
     </item>
     <item row="5" column="0">
-     <widget class="QTextEdit" name="textEdit_3">
+     <widget class="QTextEdit" name="password">
       <property name="maximumSize">
        <size>
         <width>200</width>
@@ -59,7 +59,7 @@
      </widget>
     </item>
     <item row="3" column="0">
-     <widget class="QTextEdit" name="textEdit">
+     <widget class="QTextEdit" name="login">
       <property name="maximumSize">
        <size>
         <width>200</width>
@@ -82,7 +82,7 @@
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QTextEdit" name="textEdit_2">
+     <widget class="QTextEdit" name="competition_name">
       <property name="maximumSize">
        <size>
         <width>200</width>

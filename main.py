@@ -1,6 +1,8 @@
-import sqlite3
 import sys
 from pathlib import Path
+
+import requests
+import json
 
 from PyQt5.Qt import QMainWindow, QDialog, QApplication
 from PyQt5 import uic, QtWidgets
@@ -11,9 +13,20 @@ from PyQt5.QtGui import QKeyEvent, QPixmap
 from docx import Document
 from docxtpl import DocxTemplate
 
-SELECT_ALL_PLAYERS_FROM_DB = "SELECT name, score FROM players"
-SELECT_ALL_TEAMS_FROM_DB = "SELECT name, score FROM teams"
-DELETE_PLAYER_FROM_DB = "DELETE FROM players WHERE name = "
+competition_name_ = ''
+login_ = ''
+
+PLAYERS_API_URL = 'https://yetiapi.herokuapp.com/api/participants'
+TEAMS_API_URL = 'https://yetiapi.herokuapp.com/api/teams'
+USERS_API_URL = 'https://yetiapi.herokuapp.com/api/users'
+COMPETITIONS_API_URL = 'https://yetiapi.herokuapp.com/api/competitions'
+
+PLAYERS_API_RESPONSE = requests.get(PLAYERS_API_URL).json()
+TEAMS_API_RESPONSE = requests.get(TEAMS_API_URL).json()
+USERS_API_RESPONSE = requests.get(USERS_API_URL).json()
+COMPETITIONS_API_URL = requests.get(COMPETITIONS_API_URL).json()
+
+DELETE_PLAYER_FROM_DB = 'DELETE FROM players WHERE name = '
 
 DEFAULT_FLAGS = Qt.ItemIsEditable | Qt.ItemIsEnabled
 
@@ -26,15 +39,47 @@ def default_item_constructor(content, flags, _ = None):
         item.setFlags(flags)
     return item
 
-def create_table(table, data, horizontalHeaderLabels, request, item_constructor = default_item_constructor, flags = DEFAULT_FLAGS):
-    command = data.cursor()
+def get_result(url):
+    if url.split('/')[-1] == 'teams':
+        response = TEAMS_API_RESPONSE
+    if url.split('/')[-1] == 'participants':
+        response = PLAYERS_API_RESPONSE
+
+    names = list()
+    scores = list()
+
+    scoreKey = 'score'
+    nameKey = 'team_name' if url.split('/')[-1] == 'teams' else 'user_id'
+
+    for key in response:
+        for key2 in key:
+            if key2 == nameKey:
+                # names.append((*key[key2].split()) if url.split('/')[-1] == 'teams' else USERS_API_RESPONSE[key[key2] - 1]['name'])
+                if url.split('/')[-1] == 'teams':
+                    names.append((*key[key2].split()))
+                else:
+                    names.append(USERS_API_RESPONSE[key[key2] - 1]['name'])
+            if key2 == scoreKey:
+                scores.append(key[key2])
+
+    result = list()
+    for i in range(len(names)):
+        if scores[i] >= 0:
+            result.append(tuple([names[i], scores[i]]))
+
+    return result
+
+def create_table(table, horizontalHeaderLabels, url, item_constructor = default_item_constructor, flags = DEFAULT_FLAGS):
+
     table.setColumnCount(len(horizontalHeaderLabels))
     table.setHorizontalHeaderLabels(horizontalHeaderLabels)
     header = table.horizontalHeader()
     header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
     header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
     table.setRowCount(0)
-    result = command.execute(request).fetchall()
+
+    result = get_result(url)
+
     for i, row in enumerate(result):
         table.setRowCount(table.rowCount() + 1)
         for j, elem in enumerate(row):
@@ -49,6 +94,9 @@ class LoginWindow(QMainWindow):
         self.pushButton.clicked.connect(lambda: self.show_main_window())
 
     def show_main_window(self):
+        competition_name_ = self.competition_name.toPlainText()
+        login_ = self.login.toPlainText()
+
         mainWindow.showFullScreen()
         self.close()
 
@@ -73,43 +121,38 @@ class Main(QMainWindow):
             self.show_results_button.setText('Завершить трансляцию')
         else:
             stream.close()
+            stream.contentTimer.stop()
             self.show_results_button.setText('Транслировать')
         self.streamOn = not self.streamOn
 
-    def gen_report(self):
-        competition_name = "Yeti Cup"
-        competition_date = "После дождичка в четверг"
-        competition_locate = "В большом доме"
-        competition_address = "Olga-city"
-        manager_name = "Иванов Иван Батькович"
+    def gen_report_table(self, doc, n, url):
+        result = get_result(url)
 
-        doc = DocxTemplate("report_template.docx")
-        context = { 'competition_name' : competition_name, 'competition_date' : competition_date, 'competition_locate' : competition_locate,
+        for i in range(len(result)):
+            doc.tables[n].add_row()
+            doc.tables[n].cell(i + 1, 0).text = str(i + 1)
+            doc.tables[n].cell(i + 1, 1).text = str(result[i][1])
+            doc.tables[n].cell(i + 1, 2).text = result[i][0]
+
+    def gen_report(self):
+        competition_name = competition_name_
+        competition_date = 'После дождичка в четверг'
+        competition_address = 'Olga-city, Big House'
+        manager_name = 'Иванов Иван Батькович'
+
+        doc = DocxTemplate('report_template.docx')
+        context = { 'competition_name' : competition_name, 'competition_date' : competition_date,
                     'competition_address' : competition_address, 'manager_name' : manager_name }
         doc.render(context)
-        doc.save("temp_report.docx")
+        doc.save('temp_report.docx')
 
-        doc = Document("temp_report.docx")
-        data = sqlite3.connect('database/teams.db')
-        command = data.cursor()
-        teams = command.execute(SELECT_ALL_TEAMS_FROM_DB).fetchall()
-        for i in range(len(teams)):
-            doc.tables[0].add_row()
-            doc.tables[0].cell(i + 1, 0).text = str(i + 1)
-            doc.tables[0].cell(i + 1, 1).text = teams[i][0]
-            doc.tables[0].cell(i + 1, 2).text = str(teams[i][1])
+        doc = Document('temp_report.docx')
 
-        data = sqlite3.connect('database/players.db')
-        command = data.cursor()
-        players = command.execute(SELECT_ALL_PLAYERS_FROM_DB).fetchall()
-        for i in range(len(players)):
-            doc.tables[1].add_row()
-            doc.tables[1].cell(i + 1, 0).text = str(i + 1)
-            doc.tables[1].cell(i + 1, 1).text = str(players[i][1])
-            doc.tables[1].cell(i + 1, 2).text = players[i][0]
+        self.gen_report_table(doc, 0, TEAMS_API_URL)
+        self.gen_report_table(doc, 1, PLAYERS_API_URL)
 
-        doc.save("report.docx")
-        Path("temp_report.docx").unlink()
+        doc.save('report.docx')
+        Path('temp_report.docx').unlink()
 
     def close_all_windows(self):
         stream.close()
@@ -125,10 +168,8 @@ class PlayersListWindow(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/players.ui', self)
-        self.data = sqlite3.connect('database/players.db')
-        self.command = self.data.cursor()
         self.flags = Qt.ItemIsSelectable | Qt.ItemIsEditable | Qt.ItemIsEnabled
-        self.result = create_table(self.table, self.data, ['Участник', 'Очки'], SELECT_ALL_PLAYERS_FROM_DB, self.item_constructor, self.flags)
+        self.result = create_table(self.table, ['Участник', 'Очки'], PLAYERS_API_URL, self.item_constructor, self.flags)
 
         self.add_button.clicked.connect(lambda: addPlayerDialog.show())
         self.delete_button.clicked.connect(lambda: deletePlayerDialog.show())
@@ -162,7 +203,7 @@ class PlayersListWindow(QDialog):
             newTable.append((name, score))
         for i, row in enumerate(newTable):
             if row[1] != oldTable[i][1]:
-                self.command.execute('UPDATE players SET score = ' + row[1] + ' WHERE name = "' + row[0] + '"')
+                self.command.execute('UPDATE players SET score = ' + row[1] + ' WHERE name = '' + row[0] + ''')
                 self.data.commit()
 
 
@@ -170,9 +211,7 @@ class TeamsListWindow(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/teams.ui', self)
-        self.data = sqlite3.connect('database/teams.db')
-        self.command = self.data.cursor()
-        create_table(self.table, self.data, ['Название', 'Очки'], SELECT_ALL_TEAMS_FROM_DB)
+        create_table(self.table, ['Название', 'Очки'], TEAMS_API_URL)
 
         self.to_main_window_button.clicked.connect(lambda: self.close())
 
@@ -194,7 +233,7 @@ class DeletePlayerDialog(QDialog):
     def accept(self):
         rows = playersListWindow.table.selectionModel().selectedIndexes()
         for row in rows:
-            playersListWindow.command.execute(DELETE_PLAYER_FROM_DB + '"' + str(playersListWindow.result[row.row()][0]) + '"')
+            playersListWindow.command.execute(DELETE_PLAYER_FROM_DB + ''' + str(playersListWindow.result[row.row()][0]) + ''')
             playersListWindow.table.removeRow(rows[0].row())
             playersListWindow.data.commit()
         self.close()
@@ -210,16 +249,14 @@ class StreamWindow(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/for_stream.ui', self)
-        self.data1 = sqlite3.connect('database/players.db')
-        self.data2 = sqlite3.connect('database/teams.db')
         self.label.setPixmap(QPixmap('logo.png'))
         self.label.setAlignment(Qt.AlignCenter)
         self.contents = [self.show_image, self.show_players, self.show_teams]
         self.currentContent = 0
+        self.contentTimer = QTimer(self, timeout = lambda: self.contents[self.currentContent]())
 
     def show_content(self):
         self.show_image()
-        self.contentTimer = QTimer(self, timeout = lambda: self.contents[self.currentContent]())
         self.contentTimer.start(4000)
 
     def show_image(self):
@@ -231,14 +268,14 @@ class StreamWindow(QDialog):
         self.currentContent = (self.currentContent + 1) % len(self.contents)
         self.label.hide()
         self.results_table.clear()
-        create_table(self.results_table, self.data1, ['Участник', 'Очки'], SELECT_ALL_PLAYERS_FROM_DB)
+        create_table(self.results_table, ['Участник', 'Очки'], PLAYERS_API_URL)
         self.results_table.show()
 
     def show_teams(self):
         self.currentContent = (self.currentContent + 1) % len(self.contents)
         self.label.hide()
         self.results_table.clear()
-        create_table(self.results_table, self.data2, ['Название', 'Очки'], SELECT_ALL_TEAMS_FROM_DB)
+        create_table(self.results_table, ['Название', 'Очки'], TEAMS_API_URL)
         self.results_table.show()
 
 
