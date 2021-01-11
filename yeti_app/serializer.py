@@ -26,6 +26,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
         model = Competition
         fields = (
             'year',
+            'name',
             'address',
             'date',
             'users_number'
@@ -55,7 +56,8 @@ class TeamSerializer(serializers.ModelSerializer):
             'team_name',
             'video_path',
             'info',
-            'place'
+            'place',
+            'score'
         )
 
 

@@ -7,13 +7,14 @@ class User(models.Model):
     password = models.CharField(max_length=127)
     mail = models.EmailField(unique=True)
     address = models.CharField(max_length=127)
-    phone = models.CharField(max_length=12, unique=True)
+    phone = models.CharField(max_length=12)
     photo = models.ImageField(upload_to='user_photos')
     date = models.DateTimeField(auto_now_add=True)
 
 
 class Competition(models.Model):
     year = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=63)
     address = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now_add=True, unique=True)
     users_number = models.IntegerField()
@@ -24,6 +25,7 @@ class Team(models.Model):
     video_path = models.CharField(max_length=255)
     info = models.CharField(max_length=255)
     place = models.IntegerField()
+    score = models.IntegerField()
 
 
 class Participant(models.Model):
