@@ -7,14 +7,15 @@ import json
 from PyQt5.Qt import QMainWindow, QDialog, QApplication
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import QSize, Qt, QTimer
-from PyQt5.QtWidgets import QTableWidgetItem, QDialog, QDialogButtonBox, QDesktopWidget
+from PyQt5.QtWidgets import QLineEdit, QTableWidgetItem, QDialog, QDialogButtonBox, QDesktopWidget
 from PyQt5.QtGui import QKeyEvent, QPixmap
 
 from docx import Document
 from docxtpl import DocxTemplate
 
-competition_name_ = ''
+competitionName_ = ''
 login_ = ''
+password_ = ''
 
 PLAYERS_API_URL = 'https://yetiapi.herokuapp.com/api/participants'
 TEAMS_API_URL = 'https://yetiapi.herokuapp.com/api/teams'
@@ -24,7 +25,7 @@ COMPETITIONS_API_URL = 'https://yetiapi.herokuapp.com/api/competitions'
 PLAYERS_API_RESPONSE = requests.get(PLAYERS_API_URL).json()
 TEAMS_API_RESPONSE = requests.get(TEAMS_API_URL).json()
 USERS_API_RESPONSE = requests.get(USERS_API_URL).json()
-COMPETITIONS_API_URL = requests.get(COMPETITIONS_API_URL).json()
+COMPETITIONS_API_RESPONSE = requests.get(COMPETITIONS_API_URL).json()
 
 DELETE_PLAYER_FROM_DB = 'DELETE FROM players WHERE name = '
 
@@ -70,7 +71,6 @@ def get_result(url):
     return result
 
 def create_table(table, horizontalHeaderLabels, url, item_constructor = default_item_constructor, flags = DEFAULT_FLAGS):
-
     table.setColumnCount(len(horizontalHeaderLabels))
     table.setHorizontalHeaderLabels(horizontalHeaderLabels)
     header = table.horizontalHeader()
@@ -91,14 +91,23 @@ class LoginWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/login.ui', self)
+        self.password.setEchoMode(QLineEdit.Password)
         self.pushButton.clicked.connect(lambda: self.show_main_window())
 
     def show_main_window(self):
-        competition_name_ = self.competition_name.toPlainText()
-        login_ = self.login.toPlainText()
+        competition_name_ = self.competition_name.text()
+        login_ = self.login.text()
+        password_ = self.password.text()
 
-        mainWindow.showFullScreen()
-        self.close()
+        year = [competition['year'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == competition_name_]
+
+        role = [player['role'] for user in USERS_API_RESPONSE if user['login'] == login_ for player in PLAYERS_API_RESPONSE if user['id'] == player['user_id'] and player['role']]
+
+        password = [user['password'] for user in USERS_API_RESPONSE if user['password'] == password_]
+
+        if year and role and password:
+            mainWindow.showFullScreen()
+            self.close()
 
 
 class Main(QMainWindow):
