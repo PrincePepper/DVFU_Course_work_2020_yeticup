@@ -3,6 +3,7 @@ from pathlib import Path
 
 import requests
 import json
+from datetime import datetime
 
 from PyQt5.Qt import QMainWindow, QDialog, QApplication
 from PyQt5 import uic, QtWidgets
@@ -95,15 +96,18 @@ class LoginWindow(QMainWindow):
         self.pushButton.clicked.connect(lambda: self.show_main_window())
 
     def show_main_window(self):
-        competition_name_ = self.competition_name.text()
+        global competitionName_
+        global login_
+        global password_
+        competitionName_ = self.competition_name.text()
         login_ = self.login.text()
         password_ = self.password.text()
 
-        year = [competition['year'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == competition_name_]
+        year = [competition['year'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == competitionName_]
 
-        role = [player['role'] for user in USERS_API_RESPONSE if user['login'] == login_ for player in PLAYERS_API_RESPONSE if user['id'] == player['user_id'] and player['role']]
+        role = [player['role'] for user in USERS_API_RESPONSE if user['login'] == login_ for player in PLAYERS_API_RESPONSE if user['id'] == player['user_id'] and player['role'] == 'Организатор']
 
-        password = [user['password'] for user in USERS_API_RESPONSE if user['password'] == password_]
+        password = [user['password'] for user in USERS_API_RESPONSE if user['password'] == password_ and user['login'] == login_]
 
         if year and role and password:
             mainWindow.showFullScreen()
@@ -144,14 +148,14 @@ class Main(QMainWindow):
             doc.tables[n].cell(i + 1, 2).text = result[i][0]
 
     def gen_report(self):
-        competition_name = competition_name_
-        competition_date = 'После дождичка в четверг'
-        competition_address = 'Olga-city, Big House'
-        manager_name = 'Иванов Иван Батькович'
+        competition_name = competitionName_
+        competition_date = datetime.now().date()
+        competition_address = [competition['address'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == competitionName_]
+        manager_name = [user['name'] for user in USERS_API_RESPONSE if user['login'] == login_]
 
         doc = DocxTemplate('report_template.docx')
         context = { 'competition_name' : competition_name, 'competition_date' : competition_date,
-                    'competition_address' : competition_address, 'manager_name' : manager_name }
+                    'competition_address' : competition_address[0], 'manager_name' : manager_name[0] }
         doc.render(context)
         doc.save('temp_report.docx')
 
