@@ -72,27 +72,35 @@
     <item>
      <widget class="QLabel" name="label_3">
       <property name="text">
-       <string>Роль</string>
+       <string>Логин</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QComboBox" name="comboBox">
-      <item>
-       <property name="text">
-        <string>Участник</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Эксперт</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Организатор</string>
-       </property>
-      </item>
+     <widget class="QPlainTextEdit" name="login">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>Пароль</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPlainTextEdit" name="password">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
      </widget>
     </item>
     <item>
@@ -103,7 +111,24 @@
      </widget>
     </item>
     <item>
-     <widget class="QPlainTextEdit" name="year_2">
+     <widget class="QPlainTextEdit" name="email">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Адрес</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPlainTextEdit" name="address">
       <property name="maximumSize">
        <size>
         <width>16777215</width>
@@ -120,41 +145,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QPlainTextEdit" name="dur">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>30</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_6">
-      <property name="text">
-       <string>Дата рождения</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPlainTextEdit" name="dur_2">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>30</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_7">
-      <property name="text">
-       <string>Место жительства</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPlainTextEdit" name="dur_3">
+     <widget class="QPlainTextEdit" name="phone">
       <property name="maximumSize">
        <size>
         <width>16777215</width>

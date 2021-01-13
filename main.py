@@ -20,7 +20,7 @@ authPassword = ''
 
 PLAYERS_API_URL = 'https://yetiapi.herokuapp.com/api/participants'
 TEAMS_API_URL = 'https://yetiapi.herokuapp.com/api/teams'
-USERS_API_URL = 'https://yetiapi.herokuapp.com/api/users'
+USERS_API_URL = 'https://yetiapi.herokuapp.com/api/users/'
 COMPETITIONS_API_URL = 'https://yetiapi.herokuapp.com/api/competitions'
 
 PLAYERS_API_RESPONSE = requests.get(PLAYERS_API_URL).json()
@@ -56,11 +56,7 @@ def get_result(url):
     for key in response:
         for key2 in key:
             if key2 == nameKey:
-                # names.append((*key[key2].split()) if url.split('/')[-1] == 'teams' else USERS_API_RESPONSE[key[key2] - 1]['name'])
-                if url.split('/')[-1] == 'teams':
-                    names.append((*key[key2].split()))
-                else:
-                    names.append(USERS_API_RESPONSE[key[key2] - 1]['name'])
+                names.append(key[key2] if url.split('/')[-1] == 'teams' else USERS_API_RESPONSE[key[key2] - 1]['name'])
             if key2 == scoreKey:
                 scores.append(key[key2])
 
@@ -243,7 +239,15 @@ class AddPlayerDialog(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/add_player.ui', self)
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
 
+    def accept(self):
+        data = { "name" : self.name.toPlainText(), "login" : self.login.toPlainText(), "password" : self.password.toPlainText(), "mail" : self.email.toPlainText(),
+                 "address" : self.address.toPlainText(), "phone" : self.phone.toPlainText(), "photo" : None }
+        response = requests.post(USERS_API_URL, data)
+        self.close()
 
 class DeletePlayerDialog(QDialog):
     def __init__(self):
