@@ -8,7 +8,7 @@ class User(models.Model):
     mail = models.EmailField(unique=True)
     address = models.CharField(max_length=127)
     phone = models.CharField(max_length=12)
-    photo = models.ImageField(upload_to='user_photos')
+    photo = models.ImageField(upload_to='user_photos', null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
 
