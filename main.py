@@ -5,6 +5,9 @@ import requests
 import json
 from datetime import datetime
 
+import threading
+from threading import Thread
+
 from PyQt5.Qt import QMainWindow, QDialog, QApplication
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import QSize, Qt, QTimer
@@ -246,8 +249,13 @@ class AddPlayerDialog(QDialog):
     def accept(self):
         data = { "name" : self.name.toPlainText(), "login" : self.login.toPlainText(), "password" : self.password.toPlainText(), "mail" : self.email.toPlainText(),
                  "address" : self.address.toPlainText(), "phone" : self.phone.toPlainText(), "photo" : None }
-        response = requests.post(USERS_API_URL, data)
+        package = Thread(target = self.send_data, args = (data, ))
+        package.start()
         self.close()
+    
+    def send_data(self, data):
+        response = requests.post(USERS_API_URL, data)
+
 
 class DeletePlayerDialog(QDialog):
     def __init__(self):
