@@ -278,7 +278,26 @@ class DuplicatePlayerDialog(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/duplication.ui', self)
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
 
+    def accept(self):
+        self.old_login.setStyleSheet("QLineEdit { color: black; background-color: white;}")
+        old_user = [user for user in USERS_API_RESPONSE if user['login'] == self.old_login.text()]
+        if old_user:
+            data = { "name" : old_user[0]['name'], "login" : self.new_login.text(), "password" : self.new_password.text(), "mail" : old_user[0]['mail'],
+                    "address" : old_user[0]['address'], "phone" : old_user[0]['phone'], "photo" : old_user[0]['photo'] }
+            package = Thread(target = self.send_data, args = (data, ))
+            package.start()
+        else:
+            self.old_login.setStyleSheet("QLineEdit { color: red; background-color: white;}")
+        self.close()
+    
+    def send_data(self, data):
+        response = requests.post(USERS_API_URL, data)
+        print(response)
+        print(response.json())
 
 class StreamWindow(QDialog):
     def __init__(self):
