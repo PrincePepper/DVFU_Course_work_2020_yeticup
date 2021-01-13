@@ -1,10 +1,15 @@
+import sqlite3
+import sys
+
 import requests
 import json
-USERS_API_URL = 'https://yetiapi.herokuapp.com/api/users'
 
-url = 'https://yetiapi.herokuapp.com/api/participants'
-response = requests.get(USERS_API_URL)
-print(response.json())
+
+# USERS_API_URL = 'https://yetiapi.herokuapp.com/api/users'
+
+# url = 'https://yetiapi.herokuapp.com/api/participants'
+# response = requests.get(USERS_API_URL)
+# print(response.json())
 # names = list()
 # scores = list()
 
@@ -49,8 +54,7 @@ print(response.json())
 
 # print(keys)
 
-# import sqlite3
-# import sys
+
 
 # db = sqlite3.connect('../database/players.db')
 # command = db.cursor()
@@ -68,8 +72,40 @@ print(response.json())
 #         result += (logins[i], phones[i])
     
 #     if result[0][-1] != result[0]:
-#         print("херня")
+#         print('херня')
 #         print(result[0][-1], result[0])
 #         break
 
 # print(result)
+
+
+# url = 'https://yetiapi.herokuapp.com/api/competitions/'
+# data = { 'year': 2000, 'name': 'ololo', 'address': 'Olga-City, Big House', 'date': '32', 'users_number': 13}
+# response = requests.post(url, data)
+# print(response)
+
+# url = 'https://yetiapi.herokuapp.com/api/users/'
+
+# data =  { 'id': 400, 'name': 'teeeeest', 'login': 'olo' + str(400), 'password': '1', 'mail': 'example' + str(400) + '@for.com', 'address': '1', 'phone': '1',
+#             'photo': None}
+# response = requests.post(url, data)
+# print(response.json())
+
+# url = 'https://yetiapi.herokuapp.com/api/users/6'
+# response = requests.delete(url)
+# url = 'https://yetiapi.herokuapp.com/api/users/7'
+# response = requests.delete(url)
+# url = 'https://yetiapi.herokuapp.com/api/users/8'
+# response = requests.delete(url)
+# url = 'https://yetiapi.herokuapp.com/api/users/9'
+# response = requests.delete(url)
+# url = 'https://yetiapi.herokuapp.com/api/users/10'
+# response = requests.delete(url)
+# url = 'https://yetiapi.herokuapp.com/api/users/11'
+# response = requests.delete(url)
+# url = 'https://yetiapi.herokuapp.com/api/users/12'
+# response = requests.delete(url)
+# url = 'https://yetiapi.herokuapp.com/api/users/13'
+# response = requests.delete(url)
+# url = 'https://yetiapi.herokuapp.com/api/users/14'
+# response = requests.delete(url)
