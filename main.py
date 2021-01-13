@@ -14,9 +14,9 @@ from PyQt5.QtGui import QKeyEvent, QPixmap
 from docx import Document
 from docxtpl import DocxTemplate
 
-competitionName_ = ''
-login_ = ''
-password_ = ''
+authCompetitionName = ''
+authLogin = ''
+authPassword = ''
 
 PLAYERS_API_URL = 'https://yetiapi.herokuapp.com/api/participants'
 TEAMS_API_URL = 'https://yetiapi.herokuapp.com/api/teams'
@@ -93,25 +93,35 @@ class LoginWindow(QMainWindow):
         super().__init__()
         uic.loadUi('ui_files/login.ui', self)
         self.password.setEchoMode(QLineEdit.Password)
-        self.pushButton.clicked.connect(lambda: self.show_main_window())
+        self.pushButton.clicked.connect(lambda: self.auth())
 
-    def show_main_window(self):
-        global competitionName_
-        global login_
-        global password_
-        competitionName_ = self.competition_name.text()
-        login_ = self.login.text()
-        password_ = self.password.text()
+    def auth(self):
+        self.competition_name.setStyleSheet("QLineEdit { color: black; background-color: white;}")
+        self.login.setStyleSheet("QLineEdit { color: black; background-color: white;}")
+        self.password.setStyleSheet("QLineEdit { color: black; background-color: white;}")
 
-        year = [competition['year'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == competitionName_]
+        global authCompetitionName
+        global authLogin
+        global authPassword
+        authCompetitionName = self.competition_name.text()
+        authLogin = self.login.text()
+        authPassword = self.password.text()
 
-        role = [player['role'] for user in USERS_API_RESPONSE if user['login'] == login_ for player in PLAYERS_API_RESPONSE if user['id'] == player['user_id'] and player['role'] == 'Организатор']
+        year = [competition['year'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == authCompetitionName]
 
-        password = [user['password'] for user in USERS_API_RESPONSE if user['password'] == password_ and user['login'] == login_]
+        role = [player['role'] for user in USERS_API_RESPONSE if user['login'] == authLogin for player in PLAYERS_API_RESPONSE if user['id'] == player['user_id'] and player['role'] == 'Организатор']
+
+        password = [user['password'] for user in USERS_API_RESPONSE if user['password'] == authPassword and user['login'] == authLogin]
 
         if year and role and password:
             mainWindow.showFullScreen()
             self.close()
+        elif not year:
+            self.competition_name.setStyleSheet("QLineEdit { color: red; background-color: white;}")
+        elif not role:
+            self.login.setStyleSheet("QLineEdit { color: red; background-color: white;}")
+        elif not password:
+            self.password.setStyleSheet("QLineEdit { color: red; background-color: white;}")
 
 
 class Main(QMainWindow):
@@ -148,10 +158,10 @@ class Main(QMainWindow):
             doc.tables[n].cell(i + 1, 2).text = result[i][0]
 
     def gen_report(self):
-        competition_name = competitionName_
+        competition_name = authCompetitionName
         competition_date = datetime.now().date()
-        competition_address = [competition['address'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == competitionName_]
-        manager_name = [user['name'] for user in USERS_API_RESPONSE if user['login'] == login_]
+        competition_address = [competition['address'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == authCompetitionName]
+        manager_name = [user['name'] for user in USERS_API_RESPONSE if user['login'] == authLogin]
 
         doc = DocxTemplate('report_template.docx')
         context = { 'competition_name' : competition_name, 'competition_date' : competition_date,
