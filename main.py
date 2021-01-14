@@ -21,6 +21,8 @@ authCompetitionName = ''
 authLogin = ''
 authPassword = ''
 
+year = -1
+
 PLAYERS_API_URL = 'https://yetiapi.herokuapp.com/api/participants'
 TEAMS_API_URL = 'https://yetiapi.herokuapp.com/api/teams'
 USERS_API_URL = 'https://yetiapi.herokuapp.com/api/users/'
@@ -106,6 +108,7 @@ class LoginWindow(QMainWindow):
         authLogin = self.login.text()
         authPassword = self.password.text()
 
+        global year
         year = [competition['year'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == authCompetitionName]
 
         role = [player['role'] for user in USERS_API_RESPONSE if user['login'] == authLogin for player in PLAYERS_API_RESPONSE if user['id'] == player['user_id'] and player['role'] == 'Организатор']
@@ -223,10 +226,21 @@ class PlayersListWindow(QDialog):
             name = self.table.item(i, 0).text()
             score = self.table.item(i, 1).text()
             newTable.append((name, score))
+        self.result = newTable
         for i, row in enumerate(newTable):
             if row[1] != oldTable[i][1]:
-                self.command.execute('UPDATE players SET score = ' + row[1] + ' WHERE name = '' + row[0] + ''')
-                self.data.commit()
+                player = 0
+                # player = [player for player in PLAYERS_API_RESPONSE for user in USERS_API_RESPONSE if user['name'] == row[0] and player['score'] == oldTable[i][1] and player['year'] == year[0]]
+                for bplayer in PLAYERS_API_RESPONSE:
+                    for user in USERS_API_RESPONSE:
+                        if user['name'] == row[0] and bplayer['score'] == oldTable[i][1] and bplayer['year'] == year[0]:
+                            player = bplayer
+                player['score'] = row[1]
+                package = Thread(target = self.send_data, args = (player, ))
+                package.start()
+
+    def send_data(self, data):
+        response = requests.put(PLAYERS_API_URL + '/' + str(data['id']) + '/', data)
 
 
 class TeamsListWindow(QDialog):

@@ -2,10 +2,19 @@ import sqlite3
 import sys
 
 import requests
-import json
+# import json
+
+PLAYERS_API_URL = 'https://yetiapi.herokuapp.com/api/participants/2/'
+TEAMS_API_URL = 'https://yetiapi.herokuapp.com/api/teams'
+USERS_API_URL = 'https://yetiapi.herokuapp.com/api/users/'
+COMPETITIONS_API_URL = 'https://yetiapi.herokuapp.com/api/competitions'
+
+PLAYERS_API_RESPONSE = requests.get(PLAYERS_API_URL).json()
+# TEAMS_API_RESPONSE = requests.get(TEAMS_API_URL).json()
+USERS_API_RESPONSE = requests.get(USERS_API_URL).json()
+# COMPETITIONS_API_RESPONSE = requests.get(COMPETITIONS_API_URL).json()
 
 
-# USERS_API_URL = 'https://yetiapi.herokuapp.com/api/users'
 
 # url = 'https://yetiapi.herokuapp.com/api/participants'
 # response = requests.get(USERS_API_URL)
@@ -109,3 +118,18 @@ import json
 # response = requests.delete(url)
 # url = 'https://yetiapi.herokuapp.com/api/users/14'
 # response = requests.delete(url)
+
+data = { "id": 2,
+    "user_id": 2,
+    "year": 2000,
+    "score": 555,
+    "role": "Участник",
+    "team_id": 2}
+# player = [player for player in PLAYERS_API_RESPONSE for user in USERS_API_RESPONSE if user['id'] == player['user_id'] and player['score'] == oldTable[i][1]]
+# player[0]['score'] = 777
+# package = Thread(target = self.send_data, args = (player[0], ))
+# package.start()
+
+response = requests.put(PLAYERS_API_URL, data)
+print(response)
+# print(response.json())
