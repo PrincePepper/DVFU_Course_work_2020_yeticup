@@ -8,6 +8,7 @@ router.register(r'users', UserViewSet)
 router.register(r'competitions', CompetitionViewSet)
 router.register(r'participants', ParticipantViewSet)
 router.register(r'teams', TeamViewSet)
+router.register(r'requests', RequestViewSet)
 router.register(r'images', ImageViewSet)
 router.register(r'blueprints', BlueprintViewSet)
 

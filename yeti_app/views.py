@@ -23,6 +23,11 @@ class TeamViewSet(viewsets.ModelViewSet):
     serializer_class = TeamSerializer
 
 
+class RequestViewSet(viewsets.ModelViewSet):
+    queryset = TeamRequest.objects.all()
+    serializer_class = TeamRequestSerializer
+
+
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
