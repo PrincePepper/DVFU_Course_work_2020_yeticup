@@ -28,10 +28,12 @@ TEAMS_API_URL = 'https://yetiapi.herokuapp.com/api/teams'
 USERS_API_URL = 'https://yetiapi.herokuapp.com/api/users/'
 COMPETITIONS_API_URL = 'https://yetiapi.herokuapp.com/api/competitions'
 
-PLAYERS_API_RESPONSE = requests.get(PLAYERS_API_URL).json()
-TEAMS_API_RESPONSE = requests.get(TEAMS_API_URL).json()
+
 USERS_API_RESPONSE = requests.get(USERS_API_URL).json()
 COMPETITIONS_API_RESPONSE = requests.get(COMPETITIONS_API_URL).json()
+
+PLAYERS_API_RESPONSE = requests.get(PLAYERS_API_URL).json()
+TEAMS_API_RESPONSE = requests.get(TEAMS_API_URL).json()
 
 DELETE_PLAYER_FROM_DB = 'DELETE FROM players WHERE name = '
 
@@ -282,11 +284,21 @@ class DeletePlayerDialog(QDialog):
     def accept(self):
         rows = playersListWindow.table.selectionModel().selectedIndexes()
         for row in rows:
-            playersListWindow.command.execute(DELETE_PLAYER_FROM_DB + ''' + str(playersListWindow.result[row.row()][0]) + ''')
             playersListWindow.table.removeRow(rows[0].row())
-            playersListWindow.data.commit()
+            player_id = 0
+            for player in PLAYERS_API_RESPONSE:
+                for user in USERS_API_RESPONSE:
+                    if user['name'] == playersListWindow.result[row.row()][0]:
+                        if player['score'] == playersListWindow.result[row.row()][1]:
+                            if player['year'] == year[0]:
+                                player_id = player['id']
+
+            package = Thread(target = self.send_data, args = (PLAYERS_API_URL + '/' + str(player_id), ))
+            package.start()
         self.close()
 
+    def send_data(self, url):
+        response = requests.delete(url)
 
 class DuplicatePlayerDialog(QDialog):
     def __init__(self):
