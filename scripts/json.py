@@ -18,7 +18,7 @@ USERS_API_RESPONSE = requests.get(USERS_API_URL).json()
 
 # url = 'https://yetiapi.herokuapp.com/api/participants'
 # response = requests.get(USERS_API_URL)
-# print(response.json())
+# print(PLAYERS_API_RESPONSE)
 # names = list()
 # scores = list()
 
@@ -100,10 +100,10 @@ USERS_API_RESPONSE = requests.get(USERS_API_URL).json()
 # response = requests.post(url, data)
 # print(response.json())
 
-# url = 'https://yetiapi.herokuapp.com/api/users/6'
-# response = requests.delete(url)
-# url = 'https://yetiapi.herokuapp.com/api/users/7'
-# response = requests.delete(url)
+url = 'https://yetiapi.herokuapp.com/api/participants/4'
+response = requests.delete(url)
+url = 'https://yetiapi.herokuapp.com/api/participants/3'
+response = requests.delete(url)
 # url = 'https://yetiapi.herokuapp.com/api/users/8'
 # response = requests.delete(url)
 # url = 'https://yetiapi.herokuapp.com/api/users/9'
@@ -119,17 +119,17 @@ USERS_API_RESPONSE = requests.get(USERS_API_URL).json()
 # url = 'https://yetiapi.herokuapp.com/api/users/14'
 # response = requests.delete(url)
 
-data = { "id": 2,
-    "user_id": 2,
-    "year": 2000,
-    "score": 555,
-    "role": "Участник",
-    "team_id": 2}
+# data = { "id": 2,
+#     "user_id": 2,
+#     "year": 2000,
+#     "score": 555,
+#     "role": "Участник",
+#     "team_id": 2}
 # player = [player for player in PLAYERS_API_RESPONSE for user in USERS_API_RESPONSE if user['id'] == player['user_id'] and player['score'] == oldTable[i][1]]
 # player[0]['score'] = 777
 # package = Thread(target = self.send_data, args = (player[0], ))
 # package.start()
 
-response = requests.put(PLAYERS_API_URL, data)
-print(response)
+# response = requests.put(PLAYERS_API_URL, data)
+# print(response)
 # print(response.json())

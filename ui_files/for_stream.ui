@@ -23,11 +23,22 @@
    </item>
    <item>
     <widget class="QTableWidget" name="results_table">
+     <property name="font">
+      <font>
+       <pointsize>30</pointsize>
+      </font>
+     </property>
      <attribute name="horizontalHeaderVisible">
       <bool>false</bool>
      </attribute>
      <attribute name="horizontalHeaderMinimumSectionSize">
       <number>400</number>
+     </attribute>
+     <attribute name="verticalHeaderMinimumSectionSize">
+      <number>55</number>
+     </attribute>
+     <attribute name="verticalHeaderDefaultSectionSize">
+      <number>55</number>
      </attribute>
     </widget>
    </item>
