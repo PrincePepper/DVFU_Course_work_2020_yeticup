@@ -21,8 +21,6 @@ authCompetitionName = ''
 authLogin = ''
 authPassword = ''
 
-year = -1
-
 USERS_API_URL = 'https://yetiapi.herokuapp.com/api/users/'
 COMPETITIONS_API_URL = 'https://yetiapi.herokuapp.com/api/competitions'
 PLAYERS_API_URL = 'https://yetiapi.herokuapp.com/api/participants'
@@ -32,6 +30,8 @@ USERS_API_RESPONSE = requests.get(USERS_API_URL).json()
 COMPETITIONS_API_RESPONSE = requests.get(COMPETITIONS_API_URL).json()
 PLAYERS_API_RESPONSE = requests.get(PLAYERS_API_URL).json()
 TEAMS_API_RESPONSE = requests.get(TEAMS_API_URL).json()
+
+year = [2000]
 
 DEFAULT_FLAGS = Qt.ItemIsEditable | Qt.ItemIsEnabled
 
@@ -44,7 +44,7 @@ def default_item_constructor(content, flags, _ = None):
         item.setFlags(flags)
     return item
 
-def get_result(url):
+def get_result(url, cellRange):
     if url.split('/')[-1] == 'teams':
         response = TEAMS_API_RESPONSE
     if url.split('/')[-1] == 'participants':
@@ -56,21 +56,32 @@ def get_result(url):
     scoreKey = 'score'
     nameKey = 'team_name' if url.split('/')[-1] == 'teams' else 'user_id'
 
-    for key in response:
-        for key2 in key:
-            if key2 == nameKey:
-                names.append(key[key2] if url.split('/')[-1] == 'teams' else USERS_API_RESPONSE[key[key2] - 1]['name'])
-            if key2 == scoreKey:
-                scores.append(key[key2])
+    for obj in response:
+        if url.split('/')[-1] == 'participants':
+            if obj['year'] == year[0]:
+                names.append(USERS_API_RESPONSE[obj['user_id'] - 1]['name'])
+                scores.append(obj['score'])
+        else:
+            names.append(obj['team_name'])
+            scores.append(obj['score'])
 
     result = list()
-    for i in range(len(names)):
-        if scores[i] >= 0:
-            result.append(tuple([names[i], scores[i]]))
+    i = 0
+    while i < len(names):
+        if cellRange == [0, 0]:
+            if scores[i] >= 0:
+                result.append(tuple([names[i], scores[i]]))
+        else:
+            if i >= cellRange[0] and i < cellRange[1]:
+                while len(result) < cellRange[1] and i < len(names):
+                    if scores[i] >= 0:
+                        result.append(tuple([names[i], scores[i]]))
+                    i += 1
+        i += 1
 
     return result
 
-def create_table(table, horizontalHeaderLabels, url, item_constructor = default_item_constructor, flags = DEFAULT_FLAGS):
+def create_table(table, horizontalHeaderLabels, url, item_constructor = default_item_constructor, flags = DEFAULT_FLAGS, cellRange = [0, 0]):
     table.setColumnCount(len(horizontalHeaderLabels))
     table.setHorizontalHeaderLabels(horizontalHeaderLabels)
     header = table.horizontalHeader()
@@ -78,7 +89,7 @@ def create_table(table, horizontalHeaderLabels, url, item_constructor = default_
     header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
     table.setRowCount(0)
 
-    result = get_result(url)
+    result = get_result(url, cellRange)
 
     for i, row in enumerate(result):
         table.setRowCount(table.rowCount() + 1)
@@ -327,6 +338,9 @@ class StreamWindow(QDialog):
         self.contents = [self.show_image, self.show_players, self.show_teams]
         self.currentContent = 0
         self.contentTimer = QTimer(self, timeout = lambda: self.contents[self.currentContent]())
+        self.playersCellRange = [0, 19]
+        self.teamsCellRange = [0, 19]
+        self.step = 19
 
     def show_content(self):
         self.show_image()
@@ -341,14 +355,24 @@ class StreamWindow(QDialog):
         self.currentContent = (self.currentContent + 1) % len(self.contents)
         self.label.hide()
         self.results_table.clear()
-        create_table(self.results_table, ['Участник', 'Очки'], PLAYERS_API_URL)
+        create_table(self.results_table, ['Участник', 'Очки'], PLAYERS_API_URL, cellRange = self.playersCellRange)
+        if self.results_table.rowCount() == self.playersCellRange[1] - self.playersCellRange[0]:
+            self.playersCellRange[0] += self.step
+            self.playersCellRange[1] += self.step
+        else:
+            self.playersCellRange = [0, 19]
         self.results_table.show()
 
     def show_teams(self):
         self.currentContent = (self.currentContent + 1) % len(self.contents)
         self.label.hide()
         self.results_table.clear()
-        create_table(self.results_table, ['Название', 'Очки'], TEAMS_API_URL)
+        create_table(self.results_table, ['Название', 'Очки'], TEAMS_API_URL, cellRange = self.teamsCellRange)
+        if self.results_table.rowCount() == self.teamsCellRange[1] - self.teamsCellRange[0]:
+            self.teamsCellRange[0] += self.step
+            self.teamsCellRange[1] += self.step
+        else:
+            self.teamsCellRange = [0, 19]
         self.results_table.show()
 
 
