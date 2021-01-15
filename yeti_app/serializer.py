@@ -56,8 +56,8 @@ class TeamSerializer(serializers.ModelSerializer):
             'team_name',
             'video_path',
             'info',
-            'place',
             'score',
+            'place',
             'leader_id'
         )
 

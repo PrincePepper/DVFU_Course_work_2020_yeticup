@@ -22,10 +22,10 @@ class Competition(models.Model):
 
 class Team(models.Model):
     team_name = models.CharField(max_length=25)
-    video_path = models.CharField(max_length=255, null=True, blank=True)
+    video_path = models.URLField(null=True, blank=True)
     info = models.CharField(max_length=255)
+    score = models.IntegerField(default=0)
     place = models.IntegerField()
-    score = models.IntegerField()
     leader_id = models.ForeignKey(
         'Participant',
         on_delete=models.CASCADE
@@ -33,6 +33,13 @@ class Team(models.Model):
 
 
 class Participant(models.Model):
+
+    roles = (
+        ('P', 'participant'),
+        ('E', 'expert'),
+        ('O', 'organizer')
+    )
+
     user_id = models.ForeignKey(
         User,
         on_delete=models.CASCADE
@@ -41,14 +48,7 @@ class Participant(models.Model):
         Competition,
         on_delete=models.CASCADE
     )
-    score = models.IntegerField()
-
-    roles = (
-        ('P', 'participant'),
-        ('E', 'expert'),
-        ('O', 'organizer')
-    )
-
+    score = models.IntegerField(default=0)
     role = models.CharField(max_length=1, choices=roles, default='P')
     team_id = models.ForeignKey(
         Team,
@@ -67,7 +67,6 @@ class TeamRequest(models.Model):
         Participant,
         on_delete=models.CASCADE
     )
-
 
 
 class Image(models.Model):
