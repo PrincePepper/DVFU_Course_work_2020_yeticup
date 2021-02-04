@@ -3,13 +3,12 @@ from django.db import models
 
 class User(models.Model):
     name = models.CharField(max_length=63)
-    login = models.CharField(max_length=63, unique=True)
     password = models.CharField(max_length=127)
     mail = models.EmailField(unique=True)
     address = models.CharField(max_length=127)
     phone = models.CharField(max_length=12)
     photo = models.ImageField(upload_to='user_photos', null=True, blank=True)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField()
 
 
 class Competition(models.Model):

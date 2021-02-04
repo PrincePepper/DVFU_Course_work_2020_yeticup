@@ -7,91 +7,45 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = (
-            'id',
-            'name',
-            'login',
-            'password',
-            'mail',
-            'address',
-            'phone',
-            'photo',
-            'date'
-        )
-
+        fields = '__all__'
 
 class CompetitionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Competition
-        fields = (
-            'year',
-            'name',
-            'address',
-            'date',
-            'users_number'
-        )
+        fields = '__all__'
 
 
 class ParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Participant
-        fields = (
-            'id',
-            'user_id',
-            'year',
-            'score',
-            'role',
-            'team_id'
-        )
+        fields = '__all__'
 
 
 class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = (
-            'id',
-            'team_name',
-            'video_path',
-            'info',
-            'score',
-            'place',
-            'leader_id'
-        )
+        fields = '__all__'
 
 
 class TeamRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TeamRequest
-        fields = (
-            'id',
-            'team_id',
-            'participant_id'
-        )
+        fields = '__all__'
 
 
 class ImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Image
-        fields = (
-            'id',
-            'photo',
-            'comment',
-            'team_id'
-        )
+        fields = '__all__'
 
 
 class BlueprintSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Blueprint
-        fields = (
-            'id',
-            'blueprint',
-            'info',
-            'team_id'
-        )
+        fields = '__all__'
