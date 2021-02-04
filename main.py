@@ -21,17 +21,29 @@ authCompetitionName = ''
 authLogin = ''
 authPassword = ''
 
+API_AUTH = ('yeti', 'yetiyeti')
+
 USERS_API_URL = 'https://yetiapi.herokuapp.com/api/users/'
 COMPETITIONS_API_URL = 'https://yetiapi.herokuapp.com/api/competitions'
 PLAYERS_API_URL = 'https://yetiapi.herokuapp.com/api/participants'
 TEAMS_API_URL = 'https://yetiapi.herokuapp.com/api/teams'
 
-USERS_API_RESPONSE = requests.get(USERS_API_URL).json()
-COMPETITIONS_API_RESPONSE = requests.get(COMPETITIONS_API_URL).json()
-PLAYERS_API_RESPONSE = requests.get(PLAYERS_API_URL).json()
-TEAMS_API_RESPONSE = requests.get(TEAMS_API_URL).json()
+USERS_API_RESPONSE = requests.get(USERS_API_URL, auth = API_AUTH).json()
+COMPETITIONS_API_RESPONSE = requests.get(COMPETITIONS_API_URL, auth = API_AUTH).json()
+PLAYERS_API_RESPONSE = requests.get(PLAYERS_API_URL, auth = API_AUTH).json()
+TEAMS_API_RESPONSE = requests.get(TEAMS_API_URL, auth = API_AUTH).json()
 
-year = [2000]
+year = []
+
+stream = None
+
+mainWindow = None
+
+playersListWindow = None
+teamsListWindow = None
+
+addPlayerDialog = None
+deletePlayerDialog = None
 
 DEFAULT_FLAGS = Qt.ItemIsEditable | Qt.ItemIsEnabled
 
@@ -119,12 +131,21 @@ class LoginWindow(QMainWindow):
 
         global year
         year = [competition['year'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == authCompetitionName]
-
+        print(year)
         role = [player['role'] for user in USERS_API_RESPONSE if user['login'] == authLogin for player in PLAYERS_API_RESPONSE if user['id'] == player['user_id'] and player['role'] == 'O']
 
         password = [user['password'] for user in USERS_API_RESPONSE if user['password'] == authPassword and user['login'] == authLogin]
 
         if year and role and password:
+            stream = StreamWindow()
+
+            mainWindow = Main()
+
+            playersListWindow = PlayersListWindow()
+            teamsListWindow = TeamsListWindow()
+
+            addPlayerDialog = AddPlayerDialog()
+            deletePlayerDialog = DeletePlayerDialog()
             mainWindow.showFullScreen()
             self.close()
         elif not year:
@@ -194,7 +215,6 @@ class Main(QMainWindow):
         teamsListWindow.close()
         addPlayerDialog.close()
         deletePlayerDialog.close()
-        # duplicatePlayerDialog.close()
         mainWindow.close()
 
 
@@ -207,7 +227,6 @@ class PlayersListWindow(QDialog):
 
         self.add_button.clicked.connect(lambda: addPlayerDialog.show())
         self.delete_button.clicked.connect(lambda: deletePlayerDialog.show())
-        # self.duplicate_button.clicked.connect(lambda: duplicatePlayerDialog.show())
 
         self.save_button.clicked.connect(lambda: self.save())
 
@@ -306,28 +325,6 @@ class DeletePlayerDialog(QDialog):
     def send_data(self, url):
         response = requests.delete(url)
 
-# class DuplicatePlayerDialog(QDialog):
-#     def __init__(self):
-#         super().__init__()
-#         uic.loadUi('ui_files/duplication.ui', self)
-#         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-#         self.buttonBox.accepted.connect(self.accept)
-#         self.buttonBox.rejected.connect(self.reject)
-
-#     def accept(self):
-#         self.old_login.setStyleSheet("QLineEdit { color: black; background-color: white;}")
-#         old_user = [user for user in USERS_API_RESPONSE if user['login'] == self.old_login.text()]
-#         if old_user:
-#             data = { "name" : old_user[0]['name'], "login" : self.new_login.text(), "password" : self.new_password.text(), "mail" : self.new_mail.text(),
-#                     "address" : old_user[0]['address'], "phone" : old_user[0]['phone'], "photo" : old_user[0]['photo'] }
-#             package = Thread(target = self.send_data, args = (data, ))
-#             package.start()
-#         else:
-#             self.old_login.setStyleSheet("QLineEdit { color: red; background-color: white;}")
-#         self.close()
-
-#     def send_data(self, data):
-#         response = requests.post(USERS_API_URL, data)
 
 class StreamWindow(QDialog):
     def __init__(self):
@@ -380,14 +377,4 @@ app = QApplication(sys.argv)
 loginWindow = LoginWindow()
 loginWindow.show()
 
-stream = StreamWindow()
-
-mainWindow = Main()
-
-playersListWindow = PlayersListWindow()
-teamsListWindow = TeamsListWindow()
-
-addPlayerDialog = AddPlayerDialog()
-deletePlayerDialog = DeletePlayerDialog()
-# duplicatePlayerDialog = DuplicatePlayerDialog()
 sys.exit(app.exec_())
