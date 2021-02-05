@@ -26,13 +26,14 @@ class TeamMixin:
         obj = self.get_object()
         participants = Participant.objects.filter(team_id=obj.id)
         if not obj.leader_id in participants:
-            print('a')
             leader = Participant.objects.get(id=obj.leader_id.id)
             leader.team_id = obj
             leader.save()
         for p in participants:
             if p.year.year != obj.year:
-                p.delete()
+                p.team_id = None
+                print(p.team_id)
+                p.save()
         participants = Participant.objects.filter(team_id=obj.id)
         serializer = ParticipantSerializer(participants, many=True)
         return Response(serializer.data)
