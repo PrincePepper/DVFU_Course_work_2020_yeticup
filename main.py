@@ -277,7 +277,7 @@ class PlayersListWindow(QDialog):
                 package.start()
 
     def send_data(self, data):
-        response = requests.put(PLAYERS_API_URL + '/' + str(data['id']) + '/', data)
+        response = requests.put(PLAYERS_API_URL + '/' + str(data['id']) + '/', data, auth = API_AUTH)
 
 
 class TeamsListWindow(QDialog):
@@ -305,7 +305,7 @@ class AddPlayerDialog(QDialog):
         self.close()
 
     def send_data(self, data):
-        response = requests.post(USERS_API_URL, data)
+        response = requests.post(USERS_API_URL, data, auth = API_AUTH)
 
 
 class DeletePlayerDialog(QDialog):
@@ -333,7 +333,7 @@ class DeletePlayerDialog(QDialog):
         self.close()
 
     def send_data(self, url):
-        response = requests.delete(url)
+        response = requests.delete(url, auth = API_AUTH)
 
 
 class StreamDialog(QDialog):

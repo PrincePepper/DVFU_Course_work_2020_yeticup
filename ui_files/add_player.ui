@@ -70,23 +70,6 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Логин</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPlainTextEdit" name="login">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>30</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QLabel" name="label_6">
       <property name="text">
        <string>Пароль</string>
