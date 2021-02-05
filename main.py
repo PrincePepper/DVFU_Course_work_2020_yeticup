@@ -12,7 +12,7 @@ from PyQt5.Qt import QMainWindow, QDialog, QApplication
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import QSize, Qt, QTimer
 from PyQt5.QtWidgets import QLineEdit, QTableWidgetItem, QDialog, QDialogButtonBox, QDesktopWidget
-from PyQt5.QtGui import QKeyEvent, QPixmap
+from PyQt5.QtGui import QKeyEvent, QPixmap, QFont, QFontDatabase
 
 from docx import Document
 from docxtpl import DocxTemplate
@@ -116,7 +116,8 @@ class LoginWindow(QMainWindow):
         super().__init__()
         uic.loadUi('ui_files/login.ui', self)
         self.password.setEchoMode(QLineEdit.Password)
-        self.pushButton.clicked.connect(lambda: self.auth())
+        self.pushButton.clicked.connect(lambda: self.auth()) 
+        self.pushButton.setStyleSheet('background: rgb(255,220,0);')
 
     def auth(self):
         self.competition_name.setStyleSheet("QLineEdit { color: black; background-color: white;}")
@@ -178,6 +179,11 @@ class Main(QMainWindow):
         self.show_results_button.clicked.connect(lambda: self.show_results())
         self.gen_report_button.clicked.connect(lambda: self.gen_report())
         self.exit_button.clicked.connect(lambda: self.close_all_windows())
+        self.show_players_button.setStyleSheet('background: rgb(255,220,0);')
+        self.show_teams_button.setStyleSheet('background: rgb(255,220,0);')
+        self.show_results_button.setStyleSheet('background: rgb(255,220,0);')
+        self.gen_report_button.setStyleSheet('background: rgb(255,220,0);')
+        self.exit_button.setStyleSheet('background: rgb(255,220,0);')
 
     def show_results(self):
         if QDesktopWidget().screenCount() > 1:
@@ -237,10 +243,12 @@ class PlayersListWindow(QDialog):
 
         self.add_button.clicked.connect(lambda: addPlayerDialog.show())
         self.delete_button.clicked.connect(lambda: deletePlayerDialog.show())
-
         self.save_button.clicked.connect(lambda: self.save())
-
         self.to_main_window_button.clicked.connect(lambda: self.close())
+        self.add_button.setStyleSheet('background: rgb(255,220,0);')
+        self.delete_button.setStyleSheet('background: rgb(255,220,0);')
+        self.save_button.setStyleSheet('background: rgb(255,220,0);')
+        self.to_main_window_button.setStyleSheet('background: rgb(255,220,0);')
 
         self.table.keyPressEvent = self.onKeyPress
 
@@ -287,6 +295,7 @@ class TeamsListWindow(QDialog):
         create_table(self.table, ['Название', 'Очки'], TEAMS_API_URL)
 
         self.to_main_window_button.clicked.connect(lambda: self.close())
+        self.to_main_window_button.setStyleSheet('background: rgb(255,220,0);')
 
 
 class AddPlayerDialog(QDialog):
@@ -346,7 +355,9 @@ class StreamDialog(QDialog):
                 screenButton.hide()
             else:
                 screenButton.clicked.connect(lambda: self.accept(i))
+                screenButton.setStyleSheet('background: rgb(255,220,0);')
         self.cancel.clicked.connect(self.close)
+        self.cancel.setStyleSheet('background: rgb(255,220,0);')
 
     def accept(self, screenNumber):
         stream.show_content()
@@ -405,6 +416,7 @@ class StreamWindow(QDialog):
 
 
 app = QApplication(sys.argv)
+app.setFont(QFont("Roboto", 11))
 loginWindow = LoginWindow()
 loginWindow.show()
 
