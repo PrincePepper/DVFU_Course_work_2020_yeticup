@@ -9,11 +9,18 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
+
 class CompetitionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Competition
-        fields = '__all__'
+        fields = (
+            'year',
+            'name',
+            'address',
+            'date',
+            'total_participants'
+        )
 
 
 class ParticipantSerializer(serializers.ModelSerializer):

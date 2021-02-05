@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 
 
 class User(models.Model):
@@ -15,16 +17,21 @@ class Competition(models.Model):
     year = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=63)
     address = models.CharField(max_length=100)
-    date = models.DateTimeField(auto_now_add=True, unique=True)
-    users_number = models.IntegerField()
+    date = models.DateTimeField()
+
+    participants = GenericRelation('Participant')
+
+    @property
+    def total_participants(self):
+        return self.participants.count()
 
 
 class Team(models.Model):
     team_name = models.CharField(max_length=25)
     video_path = models.URLField(null=True, blank=True)
-    info = models.CharField(max_length=255)
+    info = models.CharField(max_length=255, null=True, blank=True)
     score = models.IntegerField(default=0)
-    place = models.IntegerField()
+    place = models.IntegerField(null=True, blank=True)
     leader_id = models.ForeignKey(
         'Participant',
         on_delete=models.CASCADE
@@ -32,21 +39,16 @@ class Team(models.Model):
 
 
 class Participant(models.Model):
-
     roles = (
         ('P', 'participant'),
         ('E', 'expert'),
         ('O', 'organizer')
     )
-
     user_id = models.ForeignKey(
         User,
         on_delete=models.CASCADE
     )
-    year = models.ForeignKey(
-        Competition,
-        on_delete=models.CASCADE
-    )
+
     score = models.IntegerField(default=0)
     role = models.CharField(max_length=1, choices=roles, default='P')
     team_id = models.ForeignKey(
@@ -55,6 +57,10 @@ class Participant(models.Model):
         null=True,
         blank=True
     )
+
+    object_id = models.PositiveIntegerField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_object = GenericForeignKey('content_type', 'object_id')
 
 
 class TeamRequest(models.Model):
