@@ -180,7 +180,7 @@ class Main(QMainWindow):
         self.exit_button.clicked.connect(lambda: self.close_all_windows())
 
     def show_results(self):
-        if QDesktopWidget().screenCount:
+        if True:
         # if QDesktopWidget().screenCount() > 1:
             if not self.streamOn:
                 streamDialog.show()
@@ -341,13 +341,17 @@ class StreamDialog(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/stream_dialog.ui', self)
-        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        self.buttonBox.accepted.connect(self.accept)
-        self.buttonBox.rejected.connect(self.reject)
+        self.screens = [self.screen1, self.screen2, self.screen3, self.screen4, self.screen5, self.screen6]
+        for i, screenButton in enumerate(self.screens):
+            if i > QDesktopWidget().screenCount() - 1:
+                screenButton.hide()
+            else:
+                screenButton.clicked.connect(lambda: self.accept(i))
+        self.cancel.clicked.connect(self.close)
 
-    def accept(self):
+    def accept(self, screenNumber):
         stream.show_content()
-        monitor = QDesktopWidget().screenGeometry(1)
+        monitor = QDesktopWidget().screenGeometry(screenNumber)
         stream.move(monitor.left(), monitor.top())
         stream.showFullScreen()
         mainWindow.show_results_button.setText('Завершить трансляцию')
@@ -363,9 +367,9 @@ class StreamWindow(QDialog):
         self.contents = [self.show_image, self.show_players, self.show_teams]
         self.currentContent = 0
         self.contentTimer = QTimer(self, timeout = lambda: self.contents[self.currentContent]())
-        self.playersCellRange = [0, 19]
-        self.teamsCellRange = [0, 19]
         self.step = 19
+        self.playersCellRange = [0, self.step]
+        self.teamsCellRange = [0, self.step]
 
     def show_content(self):
         self.show_image()
@@ -385,7 +389,7 @@ class StreamWindow(QDialog):
             self.playersCellRange[0] += self.step
             self.playersCellRange[1] += self.step
         else:
-            self.playersCellRange = [0, 19]
+            self.playersCellRange = [0, self.step]
         self.results_table.show()
 
     def show_teams(self):
@@ -397,7 +401,7 @@ class StreamWindow(QDialog):
             self.teamsCellRange[0] += self.step
             self.teamsCellRange[1] += self.step
         else:
-            self.teamsCellRange = [0, 19]
+            self.teamsCellRange = [0, self.step]
         self.results_table.show()
 
 
