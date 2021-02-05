@@ -1,0 +1,1 @@
+web: gunicorn yeti_cup_api.wsgi --log-file -
