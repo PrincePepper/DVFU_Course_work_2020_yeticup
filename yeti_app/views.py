@@ -1,7 +1,6 @@
 from rest_framework import viewsets
 
-from .serializers import *
-from .mixins import UserMixin
+from .mixins import *
 
 
 class UserViewSet(UserMixin, viewsets.ModelViewSet):
@@ -9,7 +8,7 @@ class UserViewSet(UserMixin, viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-class CompetitionViewSet(viewsets.ModelViewSet):
+class CompetitionViewSet(CompetitionMixin, viewsets.ModelViewSet):
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
 
@@ -19,7 +18,7 @@ class ParticipantViewSet(viewsets.ModelViewSet):
     serializer_class = ParticipantSerializer
 
 
-class TeamViewSet(viewsets.ModelViewSet):
+class TeamViewSet(TeamMixin, viewsets.ModelViewSet):
     queryset = Team.objects.all().order_by('-leader_id__object_id').order_by(
         '-score')
     serializer_class = TeamSerializer

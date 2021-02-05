@@ -1,6 +1,4 @@
 from django.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey, \
-    GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -20,8 +18,6 @@ class Competition(models.Model):
     address = models.CharField(max_length=100)
     date = models.DateField()
 
-    participants = GenericRelation('Participant')
-
     @property
     def total_participants(self):
         return Participant.objects.filter(year=self.year).count()
@@ -40,7 +36,7 @@ class Team(models.Model):
     @property
     def get_place(self):
         one_year_team = Team.objects.all().order_by('-score').filter(
-            leader_id__object_id=self.leader_id.object_id)
+            leader_id__year=self.leader_id.year)
         if one_year_team.count() > 0:
             obj = self
             counter = 1
@@ -74,7 +70,6 @@ class Participant(models.Model):
         blank=True
     )
     year = models.ForeignKey(Competition, on_delete=models.CASCADE)
-
 
 
 class TeamRequest(models.Model):
