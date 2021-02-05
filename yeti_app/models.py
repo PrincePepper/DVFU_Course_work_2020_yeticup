@@ -34,6 +34,10 @@ class Team(models.Model):
     )
 
     @property
+    def get_year(self):
+        return self.leader_id.year.year
+
+    @property
     def get_place(self):
         one_year_team = Team.objects.all().order_by('-score').filter(
             leader_id__year=self.leader_id.year)
@@ -47,6 +51,7 @@ class Team(models.Model):
             return counter
         return 0
 
+    year = get_year
     place = get_place
 
 
@@ -81,6 +86,12 @@ class TeamRequest(models.Model):
         Participant,
         on_delete=models.CASCADE
     )
+
+    @property
+    def get_name(self):
+        return self.participant_id.user_id.name
+
+    user_name = get_name
 
 
 class Image(models.Model):

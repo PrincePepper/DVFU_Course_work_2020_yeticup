@@ -9,7 +9,7 @@ class UserViewSet(UserMixin, viewsets.ModelViewSet):
 
 
 class CompetitionViewSet(CompetitionMixin, viewsets.ModelViewSet):
-    queryset = Competition.objects.all()
+    queryset = Competition.objects.all().order_by('-date')
     serializer_class = CompetitionSerializer
 
 

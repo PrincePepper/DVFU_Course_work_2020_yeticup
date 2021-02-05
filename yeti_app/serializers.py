@@ -37,7 +37,8 @@ class TeamSerializer(serializers.ModelSerializer):
             'info',
             'score',
             'place',
-            'leader_id'
+            'leader_id',
+            'year'
         )
 
 
