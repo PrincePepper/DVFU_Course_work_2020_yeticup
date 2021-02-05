@@ -183,7 +183,7 @@ class Main(QMainWindow):
         self.show_teams_button.setStyleSheet('background: rgb(255,220,0);')
         self.show_results_button.setStyleSheet('background: rgb(255,220,0);')
         self.gen_report_button.setStyleSheet('background: rgb(255,220,0);')
-        self.exit_button.setStyleSheet('background: rgb(255,220,0);')
+        self.exit_button.setStyleSheet('background: rgb(255,0,0);')
 
     def show_results(self):
         if QDesktopWidget().screenCount() > 1:
@@ -246,7 +246,7 @@ class PlayersListWindow(QDialog):
         self.save_button.clicked.connect(lambda: self.save())
         self.to_main_window_button.clicked.connect(lambda: self.close())
         self.add_button.setStyleSheet('background: rgb(255,220,0);')
-        self.delete_button.setStyleSheet('background: rgb(255,220,0);')
+        self.delete_button.setStyleSheet('background: rgb(255,0,0);')
         self.save_button.setStyleSheet('background: rgb(255,220,0);')
         self.to_main_window_button.setStyleSheet('background: rgb(255,220,0);')
 
@@ -381,7 +381,7 @@ class StreamWindow(QDialog):
         self.contents = [self.show_image, self.show_players, self.show_teams]
         self.currentContent = 0
         self.contentTimer = QTimer(self, timeout = lambda: self.contents[self.currentContent]())
-        self.step = 19
+        self.step = 18
         self.playersCellRange = [0, self.step]
         self.teamsCellRange = [0, self.step]
 
