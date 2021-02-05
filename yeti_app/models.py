@@ -24,7 +24,7 @@ class Competition(models.Model):
 
     @property
     def total_participants(self):
-        return self.participants.count()
+        return Participant.objects.filter(year=self.year).count()
 
 
 class Team(models.Model):
@@ -50,6 +50,7 @@ class Team(models.Model):
                 counter += 1
             return counter
         return 0
+
     place = get_place
 
 
@@ -72,11 +73,8 @@ class Participant(models.Model):
         null=True,
         blank=True
     )
+    year = models.ForeignKey(Competition, on_delete=models.CASCADE)
 
-    object_id = models.PositiveIntegerField()
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE,
-                                     default=7)
-    content_object = GenericForeignKey('content_type', 'object_id')
 
 
 class TeamRequest(models.Model):
