@@ -119,6 +119,9 @@ class LoginWindow(QMainWindow):
         self.pushButton.clicked.connect(lambda: self.auth()) 
         self.pushButton.setStyleSheet('background: rgb(255,220,0);')
 
+        for competition in COMPETITIONS_API_RESPONSE:
+            self.competition_name.addItem(competition['name'])
+
     def auth(self):
         self.competition_name.setStyleSheet("QLineEdit { color: black; background-color: white;}")
         self.login.setStyleSheet("QLineEdit { color: black; background-color: white;}")
@@ -127,7 +130,7 @@ class LoginWindow(QMainWindow):
         global authCompetitionName
         global authLogin
         global authPassword
-        authCompetitionName = self.competition_name.text()
+        authCompetitionName = self.competition_name.currentText()
         authLogin = self.login.text()
         authPassword = self.password.text()
 
