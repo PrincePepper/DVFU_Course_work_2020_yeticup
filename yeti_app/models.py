@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey, \
+    GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -31,11 +32,24 @@ class Team(models.Model):
     video_path = models.URLField(null=True, blank=True)
     info = models.CharField(max_length=255, null=True, blank=True)
     score = models.IntegerField(default=0)
-    place = models.IntegerField(null=True, blank=True)
     leader_id = models.ForeignKey(
         'Participant',
         on_delete=models.CASCADE
     )
+
+    @property
+    def get_place(self):
+        one_year_team = Team.objects.all().order_by('-score').filter(
+            leader_id__object_id=self.leader_id.object_id)
+        if one_year_team.count() > 0:
+            obj = self
+            counter = 1
+            for team in one_year_team:
+                if obj.id == team.id:
+                    return counter
+                counter += 1
+            return counter
+        return 0
 
 
 class Participant(models.Model):

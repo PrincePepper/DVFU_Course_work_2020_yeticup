@@ -34,7 +34,15 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = '__all__'
+        fields = (
+            'id',
+            'team_name',
+            'video_path',
+            'info',
+            'score',
+            'get_place',
+            'leader_id'
+        )
 
 
 class TeamRequestSerializer(serializers.ModelSerializer):
