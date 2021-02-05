@@ -38,7 +38,7 @@ class Team(models.Model):
     )
 
     @property
-    def get_place(self):
+    def place(self):
         one_year_team = Team.objects.all().order_by('-score').filter(
             leader_id__object_id=self.leader_id.object_id)
         if one_year_team.count() > 0:
@@ -73,7 +73,8 @@ class Participant(models.Model):
     )
 
     object_id = models.PositiveIntegerField()
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE,
+                                     default=7)
     content_object = GenericForeignKey('content_type', 'object_id')
 
 

@@ -14,12 +14,12 @@ class CompetitionViewSet(viewsets.ModelViewSet):
 
 
 class ParticipantViewSet(viewsets.ModelViewSet):
-    queryset = Participant.objects.all()
+    queryset = Participant.objects.all().order_by('user_id__name')
     serializer_class = ParticipantSerializer
 
 
 class TeamViewSet(viewsets.ModelViewSet):
-    queryset = Team.objects.all()
+    queryset = Team.objects.all().order_by('-score')
     serializer_class = TeamSerializer
 
 

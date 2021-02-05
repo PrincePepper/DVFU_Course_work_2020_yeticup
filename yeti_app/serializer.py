@@ -40,7 +40,7 @@ class TeamSerializer(serializers.ModelSerializer):
             'video_path',
             'info',
             'score',
-            'get_place',
+            'place',
             'leader_id'
         )
 
