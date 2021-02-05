@@ -196,7 +196,7 @@ class Main(QMainWindow):
             self.streamOn = not self.streamOn
 
     def gen_report_table(self, doc, n, url):
-        result = get_result(url)
+        result = get_result(url, [0, 0])
 
         for i in range(len(result)):
             doc.tables[n].add_row()
@@ -269,6 +269,8 @@ class PlayersListWindow(QDialog):
         newTable = []
         oldTable = self.result
         for i in range(len(oldTable)):
+            if self.table.item(i, 0) is None:
+                continue
             name = self.table.item(i, 0).text()
             score = self.table.item(i, 1).text()
             newTable.append((name, score))
