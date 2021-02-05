@@ -71,7 +71,7 @@ def get_result(url, cellRange):
 
     for obj in response:
         if url.split('/')[-1] == 'participants':
-            if obj['year'] == year[0]:
+            if obj['object_id'] == year[0]:
                 names.append(USERS_API_RESPONSE[obj['user_id'] - 1]['name'])
                 scores.append(obj['score'])
         else:
@@ -123,7 +123,6 @@ class LoginWindow(QMainWindow):
             self.competition_name.addItem(competition['name'])
 
     def auth(self):
-        self.competition_name.setStyleSheet("QLineEdit { color: black; background-color: white;}")
         self.login.setStyleSheet("QLineEdit { color: black; background-color: white;}")
         self.password.setStyleSheet("QLineEdit { color: black; background-color: white;}")
 
@@ -164,8 +163,6 @@ class LoginWindow(QMainWindow):
             deletePlayerDialog = DeletePlayerDialog()
             mainWindow.showFullScreen()
             self.close()
-        elif not year:
-            self.competition_name.setStyleSheet("QLineEdit { color: red; background-color: white;}")
         elif not role:
             self.login.setStyleSheet("QLineEdit { color: red; background-color: white;}")
         elif not password:
@@ -281,7 +278,7 @@ class PlayersListWindow(QDialog):
                 player = 0
                 for bplayer in PLAYERS_API_RESPONSE:
                     for user in USERS_API_RESPONSE:
-                        if user['name'] == row[0] and bplayer['score'] == oldTable[i][1] and bplayer['year'] == year[0]:
+                        if user['name'] == row[0] and bplayer['score'] == oldTable[i][1] and bplayer['object_id'] == year[0]:
                             player = bplayer
                 player['score'] = row[1]
                 package = Thread(target = self.send_data, args = (player, ))
@@ -337,7 +334,7 @@ class DeletePlayerDialog(QDialog):
                 for user in USERS_API_RESPONSE:
                     if user['name'] == playersListWindow.result[row.row()][0]:
                         if player['score'] == playersListWindow.result[row.row()][1]:
-                            if player['year'] == year[0]:
+                            if player['object_id'] == year[0]:
                                 player_id = player['id']
 
             package = Thread(target = self.send_data, args = (PLAYERS_API_URL + '/' + str(player_id), ))
