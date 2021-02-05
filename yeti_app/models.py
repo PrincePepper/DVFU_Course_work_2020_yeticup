@@ -38,7 +38,7 @@ class Team(models.Model):
     )
 
     @property
-    def place(self):
+    def get_place(self):
         one_year_team = Team.objects.all().order_by('-score').filter(
             leader_id__object_id=self.leader_id.object_id)
         if one_year_team.count() > 0:
@@ -50,6 +50,7 @@ class Team(models.Model):
                 counter += 1
             return counter
         return 0
+    place = get_place
 
 
 class Participant(models.Model):

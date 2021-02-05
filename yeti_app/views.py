@@ -19,7 +19,8 @@ class ParticipantViewSet(viewsets.ModelViewSet):
 
 
 class TeamViewSet(viewsets.ModelViewSet):
-    queryset = Team.objects.all().order_by('-score')
+    queryset = Team.objects.all().order_by('-leader_id__object_id').order_by(
+        '-score')
     serializer_class = TeamSerializer
 
 
