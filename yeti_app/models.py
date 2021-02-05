@@ -11,14 +11,14 @@ class User(models.Model):
     address = models.CharField(max_length=127)
     phone = models.CharField(max_length=12)
     photo = models.ImageField(upload_to='user_photos', null=True, blank=True)
-    date = models.DateTimeField(null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
 
 
 class Competition(models.Model):
     year = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=63)
     address = models.CharField(max_length=100)
-    date = models.DateTimeField()
+    date = models.DateField()
 
     participants = GenericRelation('Participant')
 
