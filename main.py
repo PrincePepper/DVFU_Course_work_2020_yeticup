@@ -352,16 +352,18 @@ class StreamDialog(QDialog):
         super().__init__()
         uic.loadUi('ui_files/stream_dialog.ui', self)
         self.screens = [self.screen1, self.screen2, self.screen3, self.screen4, self.screen5, self.screen6]
+        k = 0
         for i, screenButton in enumerate(self.screens):
-            if i > QDesktopWidget().screenCount() - 1:
+            if i > QDesktopWidget().screenCount() - 2:
                 screenButton.hide()
             else:
-                screenButton.clicked.connect(lambda: self.accept(i))
+                k = i
+                screenButton.clicked.connect(lambda: self.showStream(k + 1))
                 screenButton.setStyleSheet('background: rgb(255,220,0);')
         self.cancel.clicked.connect(self.close)
         self.cancel.setStyleSheet('background: rgb(255,220,0);')
 
-    def accept(self, screenNumber):
+    def showStream(self, screenNumber):
         stream.show_content()
         monitor = QDesktopWidget().screenGeometry(screenNumber)
         stream.move(monitor.left(), monitor.top())
