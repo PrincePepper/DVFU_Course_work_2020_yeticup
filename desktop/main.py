@@ -9,7 +9,7 @@ import threading
 from threading import Thread
 
 from PyQt5.Qt import QMainWindow, QDialog, QApplication
-from PyQt5 import uic, QtWidgets
+from PyQt5 import uic, QtWidgets, QtGui
 from PyQt5.QtCore import QSize, Qt, QTimer
 from PyQt5.QtWidgets import QLineEdit, QTableWidgetItem, QDialog, QDialogButtonBox, QDesktopWidget
 from PyQt5.QtGui import QKeyEvent, QPixmap, QFont, QFontDatabase
@@ -71,7 +71,7 @@ def get_result(url, cellRange):
 
     for obj in response:
         if url.split('/')[-1] == 'participants':
-            if obj['object_id'] == year[0]:
+            if obj['year'] == year[0]:
                 names.append(USERS_API_RESPONSE[obj['user_id'] - 1]['name'])
                 scores.append(obj['score'])
         else:
@@ -118,6 +118,8 @@ class LoginWindow(QMainWindow):
         self.password.setEchoMode(QLineEdit.Password)
         self.pushButton.clicked.connect(lambda: self.auth()) 
         self.pushButton.setStyleSheet('background: rgb(255,220,0);')
+        self.setWindowIcon(QtGui.QIcon('logo.png'))
+        self.setWindowTitle("Yeti")
 
         for competition in COMPETITIONS_API_RESPONSE:
             self.competition_name.addItem(competition['name'])
@@ -280,7 +282,7 @@ class PlayersListWindow(QDialog):
                 player = 0
                 for bplayer in PLAYERS_API_RESPONSE:
                     for user in USERS_API_RESPONSE:
-                        if user['name'] == row[0] and bplayer['score'] == oldTable[i][1] and bplayer['object_id'] == year[0]:
+                        if user['name'] == row[0] and bplayer['score'] == oldTable[i][1] and bplayer['year'] == year[0]:
                             player = bplayer
                 player['score'] = row[1]
                 package = Thread(target = self.send_data, args = (player, ))
@@ -336,7 +338,7 @@ class DeletePlayerDialog(QDialog):
                 for user in USERS_API_RESPONSE:
                     if user['name'] == playersListWindow.result[row.row()][0]:
                         if player['score'] == playersListWindow.result[row.row()][1]:
-                            if player['object_id'] == year[0]:
+                            if player['year'] == year[0]:
                                 player_id = player['id']
 
             package = Thread(target = self.send_data, args = (PLAYERS_API_URL + '/' + str(player_id), ))
@@ -381,7 +383,7 @@ class StreamWindow(QDialog):
         self.contents = [self.show_image, self.show_players, self.show_teams]
         self.currentContent = 0
         self.contentTimer = QTimer(self, timeout = lambda: self.contents[self.currentContent]())
-        self.step = 18
+        self.step = 17
         self.playersCellRange = [0, self.step]
         self.teamsCellRange = [0, self.step]
 
