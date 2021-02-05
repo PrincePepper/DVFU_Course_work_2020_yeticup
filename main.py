@@ -181,6 +181,7 @@ class Main(QMainWindow):
 
     def show_results(self):
         if QDesktopWidget().screenCount:
+        # if QDesktopWidget().screenCount() > 1:
             if not self.streamOn:
                 streamDialog.show()
             else:
@@ -340,16 +341,16 @@ class StreamDialog(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui_files/stream_dialog.ui', self)
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
 
     def accept(self):
-        self.close()
         stream.show_content()
         monitor = QDesktopWidget().screenGeometry(1)
         stream.move(monitor.left(), monitor.top())
         stream.showFullScreen()
         mainWindow.show_results_button.setText('Завершить трансляцию')
-
-    def reject(self):
         self.close()
 
 
