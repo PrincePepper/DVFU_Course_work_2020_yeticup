@@ -180,8 +180,7 @@ class Main(QMainWindow):
         self.exit_button.clicked.connect(lambda: self.close_all_windows())
 
     def show_results(self):
-        if True:
-        # if QDesktopWidget().screenCount() > 1:
+        if QDesktopWidget().screenCount() > 1:
             if not self.streamOn:
                 streamDialog.show()
             else:
