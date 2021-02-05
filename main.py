@@ -36,6 +36,7 @@ TEAMS_API_RESPONSE = requests.get(TEAMS_API_URL, auth = API_AUTH).json()
 year = []
 
 stream = None
+streamDialog = None
 
 mainWindow = None
 
@@ -131,13 +132,24 @@ class LoginWindow(QMainWindow):
 
         global year
         year = [competition['year'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == authCompetitionName]
-        print(year)
-        role = [player['role'] for user in USERS_API_RESPONSE if user['login'] == authLogin for player in PLAYERS_API_RESPONSE if user['id'] == player['user_id'] and player['role'] == 'O']
 
-        password = [user['password'] for user in USERS_API_RESPONSE if user['password'] == authPassword and user['login'] == authLogin]
+        role = [player['role'] for user in USERS_API_RESPONSE if user['mail'] == authLogin for player in PLAYERS_API_RESPONSE if user['id'] == player['user_id'] and player['role'] == 'O']
+
+        password = [user['password'] for user in USERS_API_RESPONSE if user['password'] == authPassword and user['mail'] == authLogin]
 
         if year and role and password:
+            global stream
+            global streamDialog
+
+            global mainWindow
+
+            global playersListWindow
+            global teamsListWindow
+
+            global addPlayerDialog
+            global deletePlayerDialog
             stream = StreamWindow()
+            streamDialog = StreamDialog()
 
             mainWindow = Main()
 
@@ -168,17 +180,14 @@ class Main(QMainWindow):
         self.exit_button.clicked.connect(lambda: self.close_all_windows())
 
     def show_results(self):
-        if not self.streamOn:
-            stream.show_content()
-            monitor = QDesktopWidget().screenGeometry(1)
-            stream.move(monitor.left(), monitor.top())
-            stream.showFullScreen()
-            self.show_results_button.setText('Завершить трансляцию')
-        else:
-            stream.close()
-            stream.contentTimer.stop()
-            self.show_results_button.setText('Транслировать')
-        self.streamOn = not self.streamOn
+        if QDesktopWidget().screenCount:
+            if not self.streamOn:
+                streamDialog.show()
+            else:
+                stream.close()
+                stream.contentTimer.stop()
+                self.show_results_button.setText('Транслировать')
+            self.streamOn = not self.streamOn
 
     def gen_report_table(self, doc, n, url):
         result = get_result(url)
@@ -193,7 +202,7 @@ class Main(QMainWindow):
         competition_name = authCompetitionName
         competition_date = datetime.now().date()
         competition_address = [competition['address'] for competition in COMPETITIONS_API_RESPONSE if competition['name'] == authCompetitionName]
-        manager_name = [user['name'] for user in USERS_API_RESPONSE if user['login'] == authLogin]
+        manager_name = [user['name'] for user in USERS_API_RESPONSE if user['mail'] == authLogin]
 
         doc = DocxTemplate('report_template.docx')
         context = { 'competition_name' : competition_name, 'competition_date' : competition_date,
@@ -215,6 +224,7 @@ class Main(QMainWindow):
         teamsListWindow.close()
         addPlayerDialog.close()
         deletePlayerDialog.close()
+        streamDialog.close()
         mainWindow.close()
 
 
@@ -288,12 +298,12 @@ class AddPlayerDialog(QDialog):
         self.buttonBox.rejected.connect(self.reject)
 
     def accept(self):
-        data = { "name" : self.name.toPlainText(), "login" : self.login.toPlainText(), "password" : self.password.toPlainText(), "mail" : self.email.toPlainText(),
+        data = { "name" : self.name.toPlainText(), "password" : self.password.toPlainText(), "mail" : self.email.toPlainText(),
                  "address" : self.address.toPlainText(), "phone" : self.phone.toPlainText(), "photo" : None }
         package = Thread(target = self.send_data, args = (data, ))
         package.start()
         self.close()
-    
+
     def send_data(self, data):
         response = requests.post(USERS_API_URL, data)
 
@@ -324,6 +334,23 @@ class DeletePlayerDialog(QDialog):
 
     def send_data(self, url):
         response = requests.delete(url)
+
+
+class StreamDialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('ui_files/stream_dialog.ui', self)
+
+    def accept(self):
+        self.close()
+        stream.show_content()
+        monitor = QDesktopWidget().screenGeometry(1)
+        stream.move(monitor.left(), monitor.top())
+        stream.showFullScreen()
+        mainWindow.show_results_button.setText('Завершить трансляцию')
+
+    def reject(self):
+        self.close()
 
 
 class StreamWindow(QDialog):

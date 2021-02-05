@@ -57,7 +57,7 @@
        </size>
       </property>
       <property name="text">
-       <string>Логин</string>
+       <string>Почта</string>
       </property>
      </widget>
     </item>
