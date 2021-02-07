@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_profile">
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="semen.sereda.yeticup.ui.profile.ProfileFragment"
+        android:label="navigation_profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_navigation_profile_to_historyFragment"
+            app:destination="@id/historyFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="semen.sereda.yeticup.ui.home.HomeFragment"
+        android:label="navigation_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_team"
+        android:name="semen.sereda.yeticup.ui.team.TeamFragment"
+        android:label="navigation_team"
+        tools:layout="@layout/fragment_team">
+        <action
+            android:id="@+id/action_navigation_team_to_findTeamFragment"
+            app:destination="@id/findTeamFragment" />
+        <action
+            android:id="@+id/action_navigation_team_to_createTeamFragment"
+            app:destination="@id/createTeamFragment" />
+        <action
+            android:id="@+id/action_navigation_team_to_applyTeamFragment"
+            app:destination="@id/applyTeamFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/findTeamFragment"
+        android:name="semen.sereda.yeticup.ui.team.find_team.FindTeamFragment"
+        android:label="fragment_find_team"
+        tools:layout="@layout/fragment_find_team" />
+
+    <fragment
+        android:id="@+id/createTeamFragment"
+        android:name="semen.sereda.yeticup.ui.team.create_team.CreateTeamFragment"
+        android:label="CreateTeamFragment"
+        tools:layout="@layout/fragment_create_team">
+        <action
+            android:id="@+id/action_createTeamFragment_to_applyTeamFragment"
+            app:destination="@id/applyTeamFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/applyTeamFragment"
+        android:name="semen.sereda.yeticup.ui.team.apply_team.ApplyTeamFragment"
+        android:label="ApplyTeamFragment"
+        tools:layout="@layout/fragment_apply_team" />
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="semen.sereda.yeticup.ui.profile.history.HistoryFragment"
+        android:label="HistoryFragment"
+        tools:layout="@layout/fragment_history_profile" />
+</navigation>

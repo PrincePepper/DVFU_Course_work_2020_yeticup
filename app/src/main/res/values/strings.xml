@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Кубок Йети</string>
+
+    <string name="intro_htext_1">
+        Командные\n
+        соревнования
+    </string>
+    <string name="intro_htext_2">
+        Результаты в\n
+        одном месте
+    </string>
+    <string name="intro_htext_3">
+        Лента\n
+        мероприятий
+    </string>
+    <string name="intro_text_1">
+        Вы можете создать или вступить в команду
+    </string>
+    <string name="intro_text_2">
+        Вы можете посмотреть свои результаты во всех соревнованиях, которых вы участвовали
+    </string>
+    <string name="intro_text_3">
+        Вы можете посмотреть все соревнования, которые сейчас или будут проходить
+    </string>
+    <string name="todo">TODO</string>
+    <string name="forgot_password"><u>Забыли пароль?</u></string>
+    <string name="yeticup">Кубок Йети</string>
+    <string name="description_app">
+        Соревнование построения\n
+        машин Голдберга</string>
+    <string name="log_or_reg">Войдите или зарегистрируйтесь</string>
+    <string name="login_btn_text">Войти</string>
+
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_profile">профиль</string>
+    <string name="title_home">лента</string>
+    <string name="title_team">команда</string>
+    <string name="title_rate">оценки</string>
+    <string name="exit"><u>выйти</u></string>
+    <string name="find_team">Поиск команды</string>
+    <string name="create_team">Создать команду</string>
+    <string name="name_team">Название команды</string>
+    <string name="not_found_team">Не найдена команда</string>
+    <string name="lider_team">Командир команды</string>
+    <string name="scan_qr">Сканировать</string>
+    <string name="text_apply">Податься в команду</string>
+</resources>

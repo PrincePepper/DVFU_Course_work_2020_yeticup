@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".authorization.AuthorizationActivity">
+
+    <ImageView
+        android:id="@+id/imageViewButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="24dp"
+        android:contentDescription="@string/todo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_reg_step" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/textView3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
+        <View
+            android:id="@+id/reg_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/half_oval_milk"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView2"
+            style="@style/Comfortaa"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="22dp"
+            android:gravity="center_horizontal"
+            android:text="Зарегистрируйтесь, чтобы продолжить"
+            app:layout_constraintBottom_toTopOf="@+id/editTextTextPersonName"
+            app:layout_constraintEnd_toEndOf="@+id/reg_view"
+            app:layout_constraintStart_toStartOf="@+id/reg_view" />
+
+        <TextView
+            android:id="@+id/textView3"
+            style="@style/Roboto.Medium.30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="10dp"
+            android:text="Добро пожаловать"
+            app:layout_constraintBottom_toTopOf="@+id/textView2"
+            app:layout_constraintEnd_toEndOf="@+id/reg_view"
+            app:layout_constraintStart_toStartOf="@+id/reg_view" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName"
+            style="@style/Roboto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="52.2dp"
+            android:layout_marginEnd="52.2dp"
+            android:layout_marginBottom="22dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="ФИО"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toTopOf="@+id/regeditTextTextEmailAddress"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/regeditTextTextEmailAddress"
+            style="@style/Roboto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="52.2dp"
+            android:layout_marginEnd="52.2dp"
+            android:layout_marginBottom="22dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            app:layout_constraintBottom_toTopOf="@+id/regeditTextTextPassword"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/regeditTextTextPassword"
+            style="@style/Roboto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="52.2dp"
+            android:layout_marginEnd="52.2dp"
+            android:layout_marginBottom="22dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword"
+            app:layout_constraintBottom_toTopOf="@+id/regeditTextTextPasswordRepeat"
+            app:layout_constraintEnd_toEndOf="@+id/reg_view"
+            app:layout_constraintHorizontal_bias="0.515"
+            app:layout_constraintStart_toStartOf="@+id/reg_view" />
+
+        <EditText
+            android:id="@+id/regeditTextTextPasswordRepeat"
+            style="@style/Roboto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="52.2dp"
+            android:layout_marginEnd="52.2dp"
+            android:layout_marginBottom="36dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="Again Password"
+            android:inputType="textPassword"
+            app:layout_constraintBottom_toTopOf="@+id/buttonReg"
+            app:layout_constraintEnd_toEndOf="@+id/reg_view"
+            app:layout_constraintStart_toStartOf="@+id/reg_view" />
+
+        <Button
+            android:id="@+id/buttonReg"
+            style="@style/Roboto.24"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="58dp"
+            android:layout_marginEnd="52dp"
+            android:layout_marginBottom="180dp"
+            android:background="@drawable/btn_big_corner"
+            android:text="Зарегистрироваться"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/reg_view"
+            app:layout_constraintEnd_toEndOf="@+id/reg_view"
+            app:layout_constraintStart_toStartOf="@+id/reg_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ggggg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="65dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5">
+
+        <View
+            android:id="@+id/login_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/half_oval_yellow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/logo_w"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="TODO"
+            app:layout_constraintBottom_toTopOf="@+id/textname_app"
+            app:layout_constraintEnd_toEndOf="@+id/login_view"
+            app:layout_constraintStart_toStartOf="@+id/login_view"
+            app:layout_constraintTop_toTopOf="@+id/login_view"
+            app:srcCompat="@drawable/logo_whiteyeti_w" />
+
+        <TextView
+            android:id="@+id/textname_app"
+            style="@style/Comfortaa.Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="@string/yeticup"
+            app:layout_constraintBottom_toTopOf="@+id/description_app"
+            app:layout_constraintEnd_toEndOf="@+id/login_view"
+            app:layout_constraintStart_toStartOf="@+id/login_view" />
+
+        <TextView
+            android:id="@+id/description_app"
+            style="@style/Comfortaa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="52dp"
+            android:layout_marginEnd="52dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="@string/description_app"
+            app:layout_constraintBottom_toTopOf="@+id/logorReg"
+            app:layout_constraintEnd_toEndOf="@+id/login_view"
+            app:layout_constraintStart_toStartOf="@+id/login_view" />
+
+        <TextView
+            android:id="@+id/logorReg"
+            style="@style/Roboto.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="52dp"
+            android:layout_marginEnd="52dp"
+            android:layout_marginBottom="22dp"
+            android:text="@string/log_or_reg"
+            app:layout_constraintBottom_toTopOf="@+id/logEditTextTextEmailAddress"
+            app:layout_constraintEnd_toEndOf="@+id/login_view"
+            app:layout_constraintStart_toStartOf="@+id/login_view" />
+
+        <EditText
+            android:id="@+id/logEditTextTextEmailAddress"
+            style="@style/Roboto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="52dp"
+            android:layout_marginEnd="52dp"
+            android:layout_marginBottom="30dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            app:layout_constraintBottom_toTopOf="@+id/logEditTextTextPassword"
+            app:layout_constraintEnd_toEndOf="@+id/login_view"
+            app:layout_constraintStart_toStartOf="@+id/login_view" />
+
+        <EditText
+            android:id="@+id/logEditTextTextPassword"
+            style="@style/Roboto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="52dp"
+            android:layout_marginEnd="52dp"
+            android:layout_marginBottom="32dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword"
+            app:layout_constraintBottom_toTopOf="@+id/buttonLog"
+            app:layout_constraintEnd_toEndOf="@+id/login_view"
+            app:layout_constraintStart_toStartOf="@+id/login_view" />
+
+        <Button
+            android:id="@+id/buttonLog"
+            style="@style/Roboto"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="52dp"
+            android:layout_marginBottom="36dp"
+            android:background="@drawable/btn_big_corner"
+            android:text="@string/login_btn_text"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/textFieldForgotPassword"
+            app:layout_constraintEnd_toEndOf="@+id/login_view" />
+
+        <TextView
+            android:id="@+id/textFieldForgotPassword"
+            style="@style/Comfortaa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="28dp"
+            android:text="@string/forgot_password"
+            app:layout_constraintBottom_toBottomOf="@+id/login_view"
+            app:layout_constraintEnd_toEndOf="@+id/login_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
